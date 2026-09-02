@@ -1,0 +1,83 @@
+{
+  "release_tag": "v0.1.0",
+  "files": [
+    {
+      "name": "line_300901_delivered.alc",
+      "dataset": "line_300901/delivered",
+      "size": 2052,
+      "sha256": "9b34ca09b6dcb25486f81a003d5ba6b79f0dfd291675deb2d276c60f4c7f9ec4"
+    },
+    {
+      "name": "line_300901_delivered.xyz",
+      "dataset": "line_300901/delivered",
+      "size": 17245198,
+      "sha256": "39bd857f5319b043842adc3dc0a1b1377932cf0b14803d0dd330130537185da7"
+    },
+    {
+      "name": "line_300901_dat.xyz",
+      "dataset": "line_300901/inversion",
+      "size": 949893,
+      "sha256": "55eb8f28d89839a4767c3c9ef3efd3d6cf50f796abe723ba8d3d44d04c7dc9ff"
+    },
+    {
+      "name": "line_300901_mod.xyz",
+      "dataset": "line_300901/inversion",
+      "size": 1052180,
+      "sha256": "b50fe3561754fdf4989f2f005faa239a7677ee44205eccffef0226303bdbcab8"
+    },
+    {
+      "name": "line_300901_syn.xyz",
+      "dataset": "line_300901/inversion",
+      "size": 584698,
+      "sha256": "6afb9b43a56418bbf3d61a9f96e4c8f389a1a05136fc0af940933dbea7012595"
+    },
+    {
+      "name": "block_delivered.alc",
+      "dataset": "block/delivered",
+      "size": 2073,
+      "sha256": "4fff6fcc166b35607d13195efb3543fc3151fce0d3791abfb2c029bdcd9ff3ae"
+    },
+    {
+      "name": "block_delivered.xyz",
+      "dataset": "block/delivered",
+      "size": 78512333,
+      "sha256": "968e08701a4e5085f9013690546baa23a0d94db03b116594e7d94bfcec87b3de"
+    },
+    {
+      "name": "block_dat.xyz",
+      "dataset": "block/inversion",
+      "size": 10268794,
+      "sha256": "89207eb9213230d9cc7048b0e84f94ca4bc8d791832b927fc90c63126c4bccf8"
+    },
+    {
+      "name": "block_mod.xyz",
+      "dataset": "block/inversion",
+      "size": 11154810,
+      "sha256": "ff42bc4c03d1f3b9157ffda7afa5ce64953f7ca8d45c3f8128636f3a28007c2d"
+    },
+    {
+      "name": "block_syn.xyz",
+      "dataset": "block/inversion",
+      "size": 6300121,
+      "sha256": "6812ff7ea1e234b94cd764cb9b439f8dbf1e88efd4bae7ebae3db8ee9f8fb858"
+    },
+    {
+      "name": "20180613_446_NE304_LPNNRD.lin",
+      "dataset": "system",
+      "size": 68386,
+      "sha256": "e7c034598de95f2ca4c4331195d23f71d647d7658db06e6aecc3ea3419d5ea60"
+    },
+    {
+      "name": "20180613_446_NE304_LPSNRD.lin",
+      "dataset": "system",
+      "size": 65332,
+      "sha256": "c5409b3fda4d00c34694db337340208f22335a887ea99be3ef9330ed0e464180"
+    },
+    {
+      "name": "20180823_304_DualWaveform_60Hz_skb.gex",
+      "dataset": "system",
+      "size": 6925,
+      "sha256": "397350ddeb4876af8e20f7240c8fd38ae4159663cfe90b3695182278fa7eb4d4"
+    }
+  ]
+}

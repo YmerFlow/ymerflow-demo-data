@@ -19,3 +19,10 @@
 # current tree.
 data/
 shp/
+
+# python bytecode
+__pycache__/
+*.pyc
+
+# scratch extracts kept out of the way
+data/_working/

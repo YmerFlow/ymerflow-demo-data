@@ -1,0 +1,16 @@
+# Dependencies for rebuilding the demo data from the public deliverables.
+#
+# This repository is deliberately standalone: the ONLY YmerFlow-stack dependency
+# is libaarhusxyz. It does not require a YmerFlow checkout, GeoWrangler, simpeg,
+# or ymerflow-processing. tools/aem_csv_to_xyz.py is vendored rather than
+# imported from YmerFlow for exactly this reason - see tools/VENDORED.md.
+
+# --- core: needed to build the dataset and to load it -----------------------
+pandas
+libaarhusxyz          # https://github.com/YmerFlow/libaarhusxyz
+
+# --- optional: only for tools/xyz_to_line_shapefile.py ----------------------
+# Writes flight-line shapefiles for QC and mapping. Nothing else needs these,
+# so skip them if you only want the data.
+geopandas
+shapely
