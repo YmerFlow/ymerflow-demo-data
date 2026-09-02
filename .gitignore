@@ -1,0 +1,15 @@
+# Extracted data is NOT committed by default.
+#
+# data/ currently holds subsets from two different provenances, and only one of
+# them is cleared for redistribution:
+#
+#   PUBLIC  - derived from the ENWRA/LPSNRD public release (see PROVENANCE.md)
+#   PRIVATE - derived from the Workbench exports delivered by Ted Asch,
+#             pending his permission
+#
+# Ignoring the directory means a stray `git add -A` cannot publish the private
+# half. Add cleared files deliberately with `git add -f <path>`.
+#
+# This matters more than usual here: the repo is private now and will be flipped
+# public, and flipping publishes the whole history, not just the current tree.
+data/
