@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Merge Aarhus Workbench per-moment rows into one row per sounding.
+"""Split a Workbench dat/syn export into per-moment gate groups, one row per sounding.
 
 Workbench exports of the data that went into an inversion (``_MOD_dat``) and of
 the model's forward response (``_MOD_syn``) carry **two rows per sounding**, one
@@ -26,7 +26,7 @@ describes it.
 
 
 Usage:
-    python3 merge_moments.py --out ../data/line_300901/inversion \
+    python3 workbench_dat_split_moments.py --out ../data/line_300901/inversion \
         ../data/line_300901/inversion/line_300901_dat.xyz [--gex system.gex]
 """
 
