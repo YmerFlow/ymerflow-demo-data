@@ -51,8 +51,9 @@ channel. The delivered XYZ has already had those applied, so inverting it agains
 would apply them twice. `system/` therefore also carries a **derived `_xyz` GEX**: the skb
 file with `GPSDifferentialPosition`, `GPSPosition`, `AltimeterPosition` and
 `InclinometerPosition` set to zero and `GateFactor` set to 1.0 — nine lines changed, nothing
-else, `RxCoilPosition` untouched. This is SkyTEM's own convention: a published skb/xyz pair
-from a different 304 survey differs in exactly and only those keys. The pairing of a GEX with
+else, `RxCoilPosition` untouched. This is SkyTEM's own convention: a skb/xyz pair from a
+different 304 survey differs in exactly and only those keys. That pair is private and is not
+part of this repository; only the transformation it demonstrates is used. The pairing of a GEX with
 an XYZ is part of the data's provenance, which is why both are shipped and the difference is
 stated here.
 

@@ -96,8 +96,9 @@ this repository does not need a YmerFlow checkout to build or read its own data.
 shift a second time. Nothing in the toolchain checks that a GEX and an XYZ belong together, so
 this is a silent error if you get it wrong.
 
-The derivation is exactly SkyTEM's own convention: diffing a published skb/xyz pair from a
-different survey shows those keys are the *entire* difference between the two files.
+The derivation follows SkyTEM's own convention: a skb/xyz pair from another SkyTEM 304 survey
+differs in exactly and only those keys. (That pair is not public and is not included here —
+only the rule it demonstrates.)
 
 ## Two things worth knowing before you use it
 
