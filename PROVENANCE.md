@@ -45,11 +45,16 @@ Files used:
 The GEX shipped in both deliveries is **byte-identical** — one system, one description — so
 `system/` carries a single copy.
 
-**Caveat on the GEX.** The available file is the `_skb` variant, whose
-`RxCoilPosition = (-13.25, 0.00, -2.00)` is the null-coupling position — the geometry as
-flown. The delivered XYZ appears to be referenced to the transmitter frame centre instead,
-which would need a different GEX. This is unresolved; see the README. It is recorded here
-because the pairing of a GEX with an XYZ is part of the data's provenance, not a detail.
+**Two GEX variants.** The delivery publishes only the `_skb` GEX — the system as flown, with
+GPS/altimeter/inclinometer offsets from the frame centre and the measured `GateFactor` per
+channel. The delivered XYZ has already had those applied, so inverting it against the skb GEX
+would apply them twice. `system/` therefore also carries a **derived `_xyz` GEX**: the skb
+file with `GPSDifferentialPosition`, `GPSPosition`, `AltimeterPosition` and
+`InclinometerPosition` set to zero and `GateFactor` set to 1.0 — nine lines changed, nothing
+else, `RxCoilPosition` untouched. This is SkyTEM's own convention: a published skb/xyz pair
+from a different 304 survey differs in exactly and only those keys. The pairing of a GEX with
+an XYZ is part of the data's provenance, which is why both are shipped and the difference is
+stated here.
 
 ## What was done
 

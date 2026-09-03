@@ -80,21 +80,24 @@ model["layer_data"]["rho_i"].shape     # (531, 39) - soundings x layers
 Dependencies are in `requirements.txt`. The only YmerFlow-stack dependency is `libaarhusxyz`;
 this repository does not need a YmerFlow checkout to build or read its own data.
 
-## Known issue: the GEX may be the wrong variant
+## Two GEX files — use the `_xyz` one to invert
 
-`system/` currently holds the **`_skb`** GEX, which places the receiver coil at
-`RxCoilPosition = (−13.25, 0.00, −2.00)` — the null-coupling position, 13.25 m behind and 2 m
-below the transmitter frame centre.
+`system/` holds two system descriptions for the same instrument:
 
-That is the geometry *as flown*. The delivered XYZ data appears to have soundings referenced
-to the frame centre instead, which would call for a different GEX. It matters because
-inversion codes place the receiver by adding `RxCoilPosition` to the sounding location, so
-pairing this GEX with centre-referenced data displaces the receiver by ~13 m in every forward
-calculation — silently, since nothing in the toolchain checks that a GEX and an XYZ belong
-together.
+- **`…_skb.gex`** — as published with the delivery. The system *as flown*: GPS, altimeter
+  and inclinometer offsets from the frame centre, and the measured `GateFactor` per channel.
+- **`…_xyz.gex`** — derived from it by the build. The delivered XYZ has **already had those
+  corrections applied** — soundings are referenced to the frame centre and gates are scaled —
+  so the xyz GEX zeroes the sensor offsets and sets `GateFactor` to 1.0, so nothing is applied
+  twice. `RxCoilPosition` is unchanged in both: the receiver really is 13.25 m behind the frame
+  centre, and the forward model needs that.
 
-**Until this is confirmed, treat the GEX here as provisional.** If you are inverting rather
-than just loading the data, check which variant you need.
+**Invert the delivered data with `…_xyz.gex`.** Using the skb one applies the GPS-to-centre
+shift a second time. Nothing in the toolchain checks that a GEX and an XYZ belong together, so
+this is a silent error if you get it wrong.
+
+The derivation is exactly SkyTEM's own convention: diffing a published skb/xyz pair from a
+different survey shows those keys are the *entire* difference between the two files.
 
 ## Two things worth knowing before you use it
 

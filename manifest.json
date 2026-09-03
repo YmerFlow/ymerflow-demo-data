@@ -78,6 +78,12 @@
       "dataset": "system",
       "size": 6925,
       "sha256": "397350ddeb4876af8e20f7240c8fd38ae4159663cfe90b3695182278fa7eb4d4"
+    },
+    {
+      "name": "20180823_304_DualWaveform_60Hz_xyz.gex",
+      "dataset": "system",
+      "size": 6793,
+      "sha256": "9521452e93432665d99c09e0ed041592441df1bffde8e9ae01f8bd3e02fb0d3a"
     }
   ]
 }

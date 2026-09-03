@@ -94,6 +94,42 @@ SYSTEM_FILES = [
 # The vendor's "Alt" is an elevation, not an altitude. Renamed on export.
 COLUMN_RENAMES = {"Alt": "tx_elevation"}
 
+# The delivery publishes only the "_skb" GEX: the system as flown, with the GPS,
+# altimeter and inclinometer offsets from the frame centre and the measured
+# GateFactor per channel. The delivered XYZ has already had those applied -
+# soundings are referenced to the frame centre and gates are scaled - so an
+# inversion must NOT apply them again. The matching "xyz" GEX is the skb one
+# with those corrections neutralized. Verified by diffing a published skb/xyz
+# pair from another SkyTEM 304 survey: these keys are the ENTIRE difference.
+# RxCoilPosition is deliberately left alone - the receiver really is offset
+# from the frame centre, and the forward model needs that.
+SKB_GEX = "20180823_304_DualWaveform_60Hz_skb.gex"
+XYZ_GEX_OUT = "20180823_304_DualWaveform_60Hz_xyz.gex"
+GEX_ZERO_KEYS = ("GPSDifferentialPosition", "GPSPosition",
+                 "AltimeterPosition", "InclinometerPosition")
+GEX_UNIT_KEYS = ("GateFactor",)
+
+
+def derive_xyz_gex(skb_path, out_path):
+    """Write the xyz-variant GEX from the skb one; return the list of changed lines."""
+    changed, out = [], []
+    with open(skb_path, "r", errors="replace") as fh:
+        for raw in fh:
+            line = raw.rstrip("\n")
+            key = line.split("=", 1)[0].strip() if "=" in line else ""
+            base = key.rstrip("0123456789")
+            new = line
+            if base in GEX_ZERO_KEYS:
+                new = f"{key}={'0.00':>25}{'0.00':>9}{'0.00':>9}"
+            elif base in GEX_UNIT_KEYS:
+                new = f"{key}=1.0"
+            if new != line:
+                changed.append((line.strip(), new.strip()))
+            out.append(new)
+    with open(out_path, "w") as fh:
+        fh.write("\n".join(out) + "\n")
+    return changed
+
 # ALC describing the Geosoft column order, for the LPSNRD pre-processed export.
 GEOSOFT_ALC = "alc/LPSNRD2018_EM_MAG_AUX_geosoft.alc"
 
@@ -340,6 +376,16 @@ def main(argv=None):
         src = os.path.join(args.source, f)
         if os.path.exists(src):
             shutil.copy(src, sys_dir)
+
+    # Derive the xyz-variant GEX from the published skb one (see the note at
+    # SKB_GEX). Both ship: the skb GEX documents the system as flown, the xyz
+    # GEX is the one to invert the delivered data with.
+    skb = os.path.join(sys_dir, SKB_GEX)
+    if os.path.exists(skb):
+        changed = derive_xyz_gex(skb, os.path.join(sys_dir, XYZ_GEX_OUT))
+        print(f"\n  derived {XYZ_GEX_OUT} from the skb GEX - {len(changed)} line(s) changed:")
+        for before, after in changed:
+            print(f"    {before}  ->  {after}")
     print(f"\nsystem/: {len(os.listdir(sys_dir))} file(s)")
     return 0
 
