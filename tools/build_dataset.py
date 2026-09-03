@@ -98,8 +98,9 @@ COLUMN_RENAMES = {"Alt": "tx_elevation"}
 # GateFactor per channel. The delivered XYZ has already had those applied -
 # soundings are referenced to the frame centre and gates are scaled - so an
 # inversion must NOT apply them again. The matching "xyz" GEX is the skb one
-# with those corrections neutralized. Verified by diffing a published skb/xyz
-# pair from another SkyTEM 304 survey: these keys are the ENTIRE difference.
+# with those corrections neutralized. Verified by diffing a skb/xyz pair from
+# another SkyTEM 304 survey (private, not included here): these keys are the
+# ENTIRE difference.
 # RxCoilPosition is deliberately left alone - the receiver really is offset
 # from the frame centre, and the forward model needs that.
 SKB_GEX = "20180823_304_DualWaveform_60Hz_skb.gex"
