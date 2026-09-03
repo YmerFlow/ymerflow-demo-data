@@ -29,6 +29,9 @@ The links are reproduced from the survey's own `readme.txt`.
 - Viewer — <https://lpsnrd.maps.arcgis.com/apps/webappviewer/index.html?id=ac2d1aada438420492e1044472679b1c>
 - Deliverables — <https://www.dropbox.com/scl/fo/8lubs33q7s7ltg3t7unud/AIGf3RYEQqmNTKRdL5brRfU?dl=0&rlkey=5qiqfojn7g1ascvi2v7jsvt2d>
 
+**Nebraska GeoCloud** — the inversion products are also hosted here; an account is required
+(register at <https://geocloud.live/Account/Register>). The `dat`/`syn` exports are not on it.
+
 **LPS-NRD**
 - Deliverables — <https://www.dropbox.com/scl/fo/9lla2b7u66cxrp7d9qy6d/AOOOqyrJcqgGmxiCQPYSV-k/Appendices/Appendix%203%20-%20Deliverables?dl=0&rlkey=may29av4fkyammg3g6ynpbimf>
 
