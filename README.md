@@ -81,6 +81,14 @@ and how to check it.
 against the ENWRA release, difference exactly zero. That is the point of the benchmark — you
 can check your result against a model that was published independently of you.
 
+## Tutorials
+
+Three walkthroughs in [`tutorials/`](tutorials/):
+
+1. [Delivered data → resistivity model](tutorials/01-delivered-data-to-resistivity-model.md) — import, process (including the averaging step that keeps the inversion inside a free-tier budget), invert, compare with the published model.
+2. [Inversion export → resistivity model](tutorials/02-inversion-export-to-resistivity-model.md) — outline; blocked on the gate-matched GEX.
+3. [Sizing a job so it finishes](tutorials/03-sizing-a-job.md) — CPU, memory and deadline from measured runs.
+
 ## Getting it
 
 ```
