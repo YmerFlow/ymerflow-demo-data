@@ -30,7 +30,11 @@ The links are reproduced from the survey's own `readme.txt`.
 - Deliverables — <https://www.dropbox.com/scl/fo/8lubs33q7s7ltg3t7unud/AIGf3RYEQqmNTKRdL5brRfU?dl=0&rlkey=5qiqfojn7g1ascvi2v7jsvt2d>
 
 **Nebraska GeoCloud** — the inversion products are also hosted here; an account is required
-(register at <https://geocloud.live/Account/Register>). The `dat`/`syn` exports are not on it.
+(register at <https://geocloud.live/Account/Register>). Its record for the LPSNRD model lists
+it as **Published** and describes it as *"AGF, J. Abraham, Aarhus Workbench v. 5.8.3.0, 39
+layers, 1m x 1.08"* — which is the layering shipped here. GeoCloud serves it in EPSG:32104
+(Nebraska State Plane, metres); this repository keeps the delivery's UTM 14N. The `dat`/`syn`
+exports are not on it.
 
 **LPS-NRD**
 - Deliverables — <https://www.dropbox.com/scl/fo/9lla2b7u66cxrp7d9qy6d/AOOOqyrJcqgGmxiCQPYSV-k/Appendices/Appendix%203%20-%20Deliverables?dl=0&rlkey=may29av4fkyammg3g6ynpbimf>
