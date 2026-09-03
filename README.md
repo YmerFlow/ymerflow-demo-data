@@ -30,8 +30,41 @@ processing pipeline would do to it is still ahead of you, which is the point.
 So you have the whole chain — input, what was inverted, the model, and what that model
 predicts — not just a pile of soundings.
 
+## What each file is, and what to do with it
+
+| file | what it is | what consumes it |
+|---|---|---|
+| `delivered/*_delivered.xyz` + `.alc` | SkyTEM's minimally processed 10 Hz data, one row per sounding, LM and HM gates in one row | **Import** in YmerFlow (`import_skytem`: XYZ + this ALC + the GEX from `system/`), then **process**, then **invert** |
+| `system/*_xyz.gex` | the system description matching the delivered data | Import, with the file above |
+| `inversion/*_dat.xyz` | the soundings that went **into** the published inversion, *after* the contractor's culling and stacking — **two rows per sounding** (one per moment, `segment` column), as Aarhus Workbench exports them | Reference: what a good processing run should leave you with. See the note below before trying to import it |
+| `inversion/*_mod.xyz` | the published resistivity model, 39 layers | **Compare** your own inverted model against it — this is the benchmark |
+| `inversion/*_syn.xyz` | the forward response of that model, same two-rows-per-sounding layout as `dat` | Check a forward calculation, or the data fit the published model achieved |
+
 Only the `delivered` file carries an `.alc`: an ALC maps gates and channels, and a model
 carries layers, so a model's would be an empty shell.
+
+**About importing `dat` directly.** It is not a drop-in input. Workbench writes one row per
+moment per sounding, and the import expects one row per sounding with both moments across
+it; the culled gate count (22 LM / 29 HM) also needs a GEX with matching `NoGates`, not the
+full-gate one in `system/`. Inverting it is possible — the published comparison figure was
+made that way — but it takes a de-interleaving step and a gate-matched GEX that are not in
+this repository yet. Until they are, treat `dat` as a reference product, and run the pipeline
+from `delivered/`.
+
+## Which dataset for which job — read this before you invert anything
+
+These are measured runs on YmerFlow's default cluster, not estimates:
+
+| dataset | soundings | a full inversion takes | request |
+|---|---:|---|---|
+| **`line_300901`** | 8,995 | **~2 h 20 m** at 24 CPU, peak RAM 4 GiB | 24 CPU / 12 Gi / 3 h deadline |
+| **`block`** | 76,389 | **do not invert as one job** — invert per line | — |
+
+**If you are on a free or small plan, neither of these is your first job.** A single short
+line is: a few minutes at 8–16 CPU / 4 Gi. Memory barely grows with sounding count; runtime
+does, faster than linearly, and it is dominated by the 50 Gauss-Newton iterations most runs
+use whether or not they have converged. Set the deadline from the table with margin — a job
+killed at iteration 48 is billed and gives you nothing.
 
 ## The data
 
