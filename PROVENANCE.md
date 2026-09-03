@@ -39,7 +39,7 @@ Files used:
 | `LPNNRD2018_EM_MAG_AUX.xyz` (2.5 GB) | LPN-NRD | `line_300901` delivered data |
 | `LPSNRD2018_EM_MAG_AUX.XYZ` (1.8 GB) | LPS-NRD | `block` delivered data |
 | `LPNLPS_SCI12i_MOD_{dat,inv,syn}.xyz` | SCI appendix | all models, both datasets |
-| `20180823_304_DualWaveform_60Hz_skb.gex` | either | system description |
+| `20180823_304_DualWaveform_60Hz_skb.gex` | either | source for the derived xyz GEX (not shipped) |
 | `20180613_446_NE304_{LPNNRD,LPSNRD}.lin` | both | flight-line masks |
 
 The GEX shipped in both deliveries is **byte-identical** — one system, one description — so
@@ -48,14 +48,13 @@ The GEX shipped in both deliveries is **byte-identical** — one system, one des
 **Two GEX variants.** The delivery publishes only the `_skb` GEX — the system as flown, with
 GPS/altimeter/inclinometer offsets from the frame centre and the measured `GateFactor` per
 channel. The delivered XYZ has already had those applied, so inverting it against the skb GEX
-would apply them twice. `system/` therefore also carries a **derived `_xyz` GEX**: the skb
+would apply them twice. `system/` therefore carries only a **derived `_xyz` GEX**: the skb
 file with `GPSDifferentialPosition`, `GPSPosition`, `AltimeterPosition` and
 `InclinometerPosition` set to zero and `GateFactor` set to 1.0 — nine lines changed, nothing
 else, `RxCoilPosition` untouched. This is SkyTEM's own convention: a skb/xyz pair from a
 different 304 survey differs in exactly and only those keys. That pair is private and is not
 part of this repository; only the transformation it demonstrates is used. The pairing of a GEX with
-an XYZ is part of the data's provenance, which is why both are shipped and the difference is
-stated here.
+an XYZ is part of the data's provenance, which is why only the matching variant is shipped and the derivation is stated here.
 
 ## What was done
 

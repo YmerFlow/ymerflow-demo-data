@@ -86,7 +86,6 @@ SOURCES = {
 # Shared system description - one GEX serves both districts (the two copies in
 # the delivery are byte-identical), plus a flight-line mask per district.
 SYSTEM_FILES = [
-    "20180823_304_DualWaveform_60Hz_skb.gex",
     "20180613_446_NE304_LPNNRD.lin",
     "20180613_446_NE304_LPSNRD.lin",
 ]
@@ -378,9 +377,10 @@ def main(argv=None):
             shutil.copy(src, sys_dir)
 
     # Derive the xyz-variant GEX from the published skb one (see the note at
-    # SKB_GEX). Both ship: the skb GEX documents the system as flown, the xyz
-    # GEX is the one to invert the delivered data with.
-    skb = os.path.join(sys_dir, SKB_GEX)
+    # SKB_GEX). Only the xyz GEX ships: it is the one that matches the delivered
+    # data. The skb file is an input to this build, not a deliverable - shipping
+    # it beside centre-referenced XYZ invites inverting with the wrong geometry.
+    skb = os.path.join(args.source, SKB_GEX)
     if os.path.exists(skb):
         changed = derive_xyz_gex(skb, os.path.join(sys_dir, XYZ_GEX_OUT))
         print(f"\n  derived {XYZ_GEX_OUT} from the skb GEX - {len(changed)} line(s) changed:")

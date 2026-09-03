@@ -74,12 +74,6 @@
       "sha256": "c5409b3fda4d00c34694db337340208f22335a887ea99be3ef9330ed0e464180"
     },
     {
-      "name": "20180823_304_DualWaveform_60Hz_skb.gex",
-      "dataset": "system",
-      "size": 6925,
-      "sha256": "397350ddeb4876af8e20f7240c8fd38ae4159663cfe90b3695182278fa7eb4d4"
-    },
-    {
       "name": "20180823_304_DualWaveform_60Hz_xyz.gex",
       "dataset": "system",
       "size": 6793,

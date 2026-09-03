@@ -19,7 +19,7 @@ Each is laid out the same way — the survey data kept separate from somebody's 
   inversion/   <dataset>_dat.xyz         the data that went INTO the inversion
                <dataset>_mod.xyz         the recovered resistivity model
                <dataset>_syn.xyz         the forward response of that model
-system/        the GEX, and a flight-line mask per district
+system/        the xyz-variant GEX, and a flight-line mask per district
 ```
 
 **`delivered/` is the contractor's product, minimally processed** — navigation and drift
@@ -80,25 +80,19 @@ model["layer_data"]["rho_i"].shape     # (531, 39) - soundings x layers
 Dependencies are in `requirements.txt`. The only YmerFlow-stack dependency is `libaarhusxyz`;
 this repository does not need a YmerFlow checkout to build or read its own data.
 
-## Two GEX files — use the `_xyz` one to invert
+## The GEX is the xyz variant — on purpose
 
-`system/` holds two system descriptions for the same instrument:
+`system/` ships **one** system description, `…_xyz.gex`. The delivery only publishes the
+`_skb` GEX — the system *as flown*, with GPS/altimeter/inclinometer offsets from the frame
+centre and the measured `GateFactor` per channel. But the delivered XYZ has **already had
+those corrections applied**: soundings are referenced to the frame centre and gates are
+scaled. Inverting it against the skb GEX applies them a second time, silently.
 
-- **`…_skb.gex`** — as published with the delivery. The system *as flown*: GPS, altimeter
-  and inclinometer offsets from the frame centre, and the measured `GateFactor` per channel.
-- **`…_xyz.gex`** — derived from it by the build. The delivered XYZ has **already had those
-  corrections applied** — soundings are referenced to the frame centre and gates are scaled —
-  so the xyz GEX zeroes the sensor offsets and sets `GateFactor` to 1.0, so nothing is applied
-  twice. `RxCoilPosition` is unchanged in both: the receiver really is 13.25 m behind the frame
-  centre, and the forward model needs that.
-
-**Invert the delivered data with `…_xyz.gex`.** Using the skb one applies the GPS-to-centre
-shift a second time. Nothing in the toolchain checks that a GEX and an XYZ belong together, so
-this is a silent error if you get it wrong.
-
-The derivation follows SkyTEM's own convention: a skb/xyz pair from another SkyTEM 304 survey
-differs in exactly and only those keys. (That pair is not public and is not included here —
-only the rule it demonstrates.)
+So the build derives the xyz GEX from the published skb one: sensor-position offsets zeroed,
+`GateFactor` set to 1.0, everything else — gate times, waveforms, loop geometry,
+`RxCoilPosition` — untouched. That is SkyTEM's own convention for the two variants. The skb
+file is an input to `tools/build_dataset.py`, not a deliverable; if you want it, it is in the
+district's Dropbox (see PROVENANCE).
 
 ## Two things worth knowing before you use it
 
