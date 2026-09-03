@@ -107,6 +107,11 @@ one, reached independently through this pipeline.
 
 ## Rights
 
+**Permission to host.** AGF — the contractor that processed and inverted the survey, and
+whose two owners, Ted Asch and Jared Abraham, produced the Workbench exports and the published
+inversion — has said to host it (Jared Abraham, via Ben, 2026-09-04). The inversion is in any
+case published by the districts and flagged *Published* on the Nebraska GeoCloud.
+
 **The survey data is not ours.** It was collected for ENWRA and published by the two
 districts; this repository redistributes public subsets of it and imposes no further
 restrictions. Cite the original survey — ENWRA 2018 — not this repository, when the data
