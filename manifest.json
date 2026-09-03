@@ -16,20 +16,20 @@
     {
       "name": "line_300901_dat.xyz",
       "dataset": "line_300901/inversion",
-      "size": 949893,
-      "sha256": "55eb8f28d89839a4767c3c9ef3efd3d6cf50f796abe723ba8d3d44d04c7dc9ff"
+      "size": 949828,
+      "sha256": "9c63138f5582bd5e0466b799f94a6e89cbb90e845921b9444975e6d4d6228b0d"
     },
     {
       "name": "line_300901_mod.xyz",
       "dataset": "line_300901/inversion",
-      "size": 1052180,
-      "sha256": "b50fe3561754fdf4989f2f005faa239a7677ee44205eccffef0226303bdbcab8"
+      "size": 1052115,
+      "sha256": "b93bc5b9fe4995150aecd6abf6a09e90ca88b4d833f2795f4640bef78e795dce"
     },
     {
       "name": "line_300901_syn.xyz",
       "dataset": "line_300901/inversion",
-      "size": 584698,
-      "sha256": "6afb9b43a56418bbf3d61a9f96e4c8f389a1a05136fc0af940933dbea7012595"
+      "size": 584633,
+      "sha256": "f92dbf78fde5ec19f85ff9b1449ddd0f561564d3747ffe0562cb1cd15931e43a"
     },
     {
       "name": "block_delivered.alc",
@@ -46,20 +46,20 @@
     {
       "name": "block_dat.xyz",
       "dataset": "block/inversion",
-      "size": 10268794,
-      "sha256": "89207eb9213230d9cc7048b0e84f94ca4bc8d791832b927fc90c63126c4bccf8"
+      "size": 10268729,
+      "sha256": "a109d4819acaf925a00a385d796c5555f082770da0eb4455e82b4a94e681a9f6"
     },
     {
       "name": "block_mod.xyz",
       "dataset": "block/inversion",
-      "size": 11154810,
-      "sha256": "ff42bc4c03d1f3b9157ffda7afa5ce64953f7ca8d45c3f8128636f3a28007c2d"
+      "size": 11154745,
+      "sha256": "7bc7ca31956f24d7ccaf3663fbdae3a753f6b0a2c45297ac36eedad5a3155994"
     },
     {
       "name": "block_syn.xyz",
       "dataset": "block/inversion",
-      "size": 6300121,
-      "sha256": "6812ff7ea1e234b94cd764cb9b439f8dbf1e88efd4bae7ebae3db8ee9f8fb858"
+      "size": 6300056,
+      "sha256": "cd37bc49d90d144b44258cfa3da4ff0911ad6f5a855b1dd6d8db3402a9a6c384"
     },
     {
       "name": "20180613_446_NE304_LPNNRD.lin",

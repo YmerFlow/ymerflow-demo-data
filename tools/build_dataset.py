@@ -31,6 +31,7 @@ Usage:
 
 import argparse
 import os
+import re
 import shutil
 import sys
 
@@ -95,6 +96,40 @@ COLUMN_RENAMES = {"Alt": "tx_elevation"}
 
 # ALC describing the Geosoft column order, for the LPSNRD pre-processed export.
 GEOSOFT_ALC = "alc/LPSNRD2018_EM_MAG_AUX_geosoft.alc"
+
+
+# Identifying detail carried in the Workbench export headers. A delivered file
+# names things in more places than its filename, and free-text header fields are
+# where they survive: these two carry an individual's username and a contractor's
+# internal directory tree, neither of which belongs in a public dataset.
+#
+# The survey itself needs no scrubbing - it is published by the districts, so its
+# location, dates and line numbering are already public. Only the operator's own
+# details are removed.
+HEADER_SCRUBS = [
+    (re.compile(r"User:\s*\S+"), "User: <User>"),
+    (re.compile(r"^[A-Za-z]:\\.*$"), "LPSNRD_SCI_folder"),   # absolute Windows path
+]
+
+
+def scrub_header(xyz):
+    """Replace identifying operator detail in a model's header block.
+
+    Returns a list of (before, after) pairs for whatever was changed, so the
+    build reports it rather than scrubbing silently.
+    """
+    changed = []
+    info = xyz.get("model_info") or {}
+    for key, value in info.items():
+        if not isinstance(value, str):
+            continue
+        new = value
+        for pattern, replacement in HEADER_SCRUBS:
+            new = pattern.sub(replacement, new)
+        if new != value:
+            info[key] = new
+            changed.append((value, new))
+    return changed
 
 
 # A real layer in a geometric-progression discretization is only ~1.05-1.3x
@@ -251,6 +286,8 @@ def build_models(dataset, src_root, out_dir, lines):
             print(f"  [{name}] {kind}: no matching rows")
             continue
         xyz = lx.parse(tmp)
+        for before, after in scrub_header(xyz):
+            print(f"    scrubbed header: {before[:58]!r} -> {after[:48]!r}")
         dropped = strip_halfspace(xyz)
         inv_dir = os.path.join(out_dir, "inversion")
         os.makedirs(inv_dir, exist_ok=True)
