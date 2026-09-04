@@ -25,9 +25,9 @@ Each dataset is laid out the same way — the survey data kept separate from AGF
 ```
 <dataset>/
   as_delivered/   skytem_as_delivered_<dataset>.xyz + .alc   SkyTEM's 10 Hz product. PROCESS FIRST.
-  agf_inversion/  inversion_input_data_<dataset>.xyz          the soundings AGF actually inverted
+  agf_inversion/  inversion_input_data_<dataset>.xyz + .alc   the soundings AGF actually inverted. IMPORTABLE.
                   inversion_resistivity_model_<dataset>.xyz   AGF's published model - the benchmark
-                  inversion_forward_response_<dataset>.xyz    what that model predicts the data to be
+                  inversion_forward_response_<dataset>.xyz + .alc   what that model predicts the data to be
 system/           system_skytem304_for_delivered_data.gex     the GEX to import the delivered data with
 ```
 
@@ -49,20 +49,21 @@ predicts — not just a pile of soundings.
 |---|---|---|
 | `as_delivered/skytem_as_delivered_*.xyz` + `.alc` | SkyTEM's minimally processed 10 Hz data, one row per sounding, LM and HM gates in one row | **Import** in YmerFlow (`import_skytem`: XYZ + this ALC + the GEX from `system/`), then **process — including the averaging step —** then **invert** |
 | `system/system_skytem304_for_delivered_data.gex` | the system description matching the delivered data | Import, with the file above |
-| `agf_inversion/inversion_input_data_*.xyz` | the soundings that went **into** AGF's inversion, *after* their culling and stacking — **two rows per sounding** (one per moment, `segment` column), as Aarhus Workbench exports them | Reference: what a good processing run should leave you with. See the note below before trying to import it |
+| `agf_inversion/inversion_input_data_*.xyz` + `.alc` | the soundings that went **into** AGF's inversion, *after* their culling and stacking — one row per sounding, `Gate_Ch01`/`Gate_Ch02` with their STD and in-use flags, one column per GEX gate | **Import** in YmerFlow with the same GEX from `system/`, then **invert** — no averaging needed, it is already 531 soundings on the line. This is the shortest path to a model you can compare with the published one |
 | `agf_inversion/inversion_resistivity_model_*.xyz` | AGF's published resistivity model, 39 layers | **Compare** your own inverted model against it — this is the benchmark |
-| `agf_inversion/inversion_forward_response_*.xyz` | the forward response of that model, same two-rows-per-sounding layout | Check a forward calculation, or the data fit the published model achieved |
+| `agf_inversion/inversion_forward_response_*.xyz` + `.alc` | the forward response of that model, same layout as the input data | Check a forward calculation, or the data fit the published model achieved |
 
-Only the as-delivered file carries an `.alc`: an ALC maps gates and channels, and a model
-carries layers, so a model's would be an empty shell.
+The model file carries no `.alc`: an ALC maps gates and channels, and a model carries
+layers, so its ALC would be an empty shell.
 
-**About importing `inversion_input_data` directly.** It is not a drop-in input. Workbench writes one row per
-moment per sounding, and the import expects one row per sounding with both moments across
-it; the culled gate count (22 LM / 29 HM) also needs a GEX with matching `NoGates`, not the
-full-gate one in `system/`. Inverting it is possible — the published comparison figure was
-made that way — but it takes a de-interleaving step and a gate-matched GEX that are not in
-this repository yet. Until they are, treat the inversion input as a reference product, and run the pipeline
-from `as_delivered/`.
+**How the inversion input and forward response got that shape.** Aarhus Workbench exports
+them as two rows per sounding, one per moment, with the LM and HM gates interleaved across
+one set of columns by gate time — a layout no importer takes. The build merges the pair per
+sounding and places every exported gate on its GEX gate by matching gate times, so the file
+carries the full 28 LM + 37 HM gate columns; gates Workbench culled, or never exported, are
+`*` with in-use 0. That is why the same `system/` GEX imports both the delivered data and the
+inversion input. The conversion is `tools/workbench_dat_split_moments.py`, and the Workbench
+originals are one `build_dataset.py` run away if you want them. Details in PROVENANCE.
 
 ## Which dataset for which job — read this before you invert anything
 
@@ -99,7 +100,7 @@ can check your result against a model that was published independently of you.
 Three walkthroughs in [`tutorials/`](tutorials/):
 
 1. [Delivered data → resistivity model](tutorials/01-delivered-data-to-resistivity-model.md) — import, process (including the averaging step that keeps the inversion inside a free-tier budget), invert, compare with the published model.
-2. [Inversion export → resistivity model](tutorials/02-inversion-export-to-resistivity-model.md) — outline; blocked on the gate-matched GEX.
+2. [Inversion export → resistivity model](tutorials/02-inversion-export-to-resistivity-model.md) — import AGF's own inversion input, invert it, compare with the published model. The short path.
 3. [Sizing a job so it finishes](tutorials/03-sizing-a-job.md) — CPU, memory and deadline from measured runs.
 
 ## Getting it

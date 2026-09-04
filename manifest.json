@@ -15,18 +15,32 @@
       "sha256": "39bd857f5319b043842adc3dc0a1b1377932cf0b14803d0dd330130537185da7"
     },
     {
+      "name": "inversion_forward_response_line_300901.alc",
+      "dataset": "line_300901/agf_inversion",
+      "release_tag": "line-v0.1.0",
+      "size": 3522,
+      "sha256": "156e44290af8800f9463e0aa9afcee8cd003ff8b0f758f6328744103ba78ffc9"
+    },
+    {
       "name": "inversion_forward_response_line_300901.xyz",
       "dataset": "line_300901/agf_inversion",
       "release_tag": "line-v0.1.0",
-      "size": 584633,
-      "sha256": "f92dbf78fde5ec19f85ff9b1449ddd0f561564d3747ffe0562cb1cd15931e43a"
+      "size": 386033,
+      "sha256": "59d0e7c1f2a6ce52962811b0fa84a4f8b47393eecb33d71aec15987f57dc5cf0"
+    },
+    {
+      "name": "inversion_input_data_line_300901.alc",
+      "dataset": "line_300901/agf_inversion",
+      "release_tag": "line-v0.1.0",
+      "size": 5212,
+      "sha256": "dcb19f475363beba5f0554cc7392a1198e0e2e0fd06c2865783a621db1fc2ad8"
     },
     {
       "name": "inversion_input_data_line_300901.xyz",
       "dataset": "line_300901/agf_inversion",
       "release_tag": "line-v0.1.0",
-      "size": 949828,
-      "sha256": "9c63138f5582bd5e0466b799f94a6e89cbb90e845921b9444975e6d4d6228b0d"
+      "size": 566602,
+      "sha256": "ee4fc3daf4d6df0dcabce830434d81489f38a90d3aacbe8146e2d86bed5e6106"
     },
     {
       "name": "inversion_resistivity_model_line_300901.xyz",
@@ -50,18 +64,32 @@
       "sha256": "968e08701a4e5085f9013690546baa23a0d94db03b116594e7d94bfcec87b3de"
     },
     {
+      "name": "inversion_forward_response_block.alc",
+      "dataset": "block/agf_inversion",
+      "release_tag": "block-v0.1.0",
+      "size": 3522,
+      "sha256": "156e44290af8800f9463e0aa9afcee8cd003ff8b0f758f6328744103ba78ffc9"
+    },
+    {
       "name": "inversion_forward_response_block.xyz",
       "dataset": "block/agf_inversion",
       "release_tag": "block-v0.1.0",
-      "size": 6300056,
-      "sha256": "cd37bc49d90d144b44258cfa3da4ff0911ad6f5a855b1dd6d8db3402a9a6c384"
+      "size": 4083496,
+      "sha256": "8784407ec422b5e189861cd07b8ec1fa078bfe245867ff93302576613f96a0df"
+    },
+    {
+      "name": "inversion_input_data_block.alc",
+      "dataset": "block/agf_inversion",
+      "release_tag": "block-v0.1.0",
+      "size": 5212,
+      "sha256": "dcb19f475363beba5f0554cc7392a1198e0e2e0fd06c2865783a621db1fc2ad8"
     },
     {
       "name": "inversion_input_data_block.xyz",
       "dataset": "block/agf_inversion",
       "release_tag": "block-v0.1.0",
-      "size": 10268729,
-      "sha256": "a109d4819acaf925a00a385d796c5555f082770da0eb4455e82b4a94e681a9f6"
+      "size": 6032719,
+      "sha256": "b6a97d4f7dfb93817bd612091cfd326006e95aa254d803e7d6590ef0928c291c"
     },
     {
       "name": "inversion_resistivity_model_block.xyz",

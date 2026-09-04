@@ -83,6 +83,26 @@ an XYZ is part of the data's provenance, which is why only the matching variant 
    and the last layer's median thickness against the one above it (computed from
    `dep_bot − dep_top`, ratio ≥ 3) — and prefers the geometric signal when they disagree,
    because column bookkeeping is convention-dependent while the geometry is the data.
+5. **Moments split in the inversion input and forward response.** Workbench exports
+   `_MOD_dat` and `_MOD_syn` as two rows per sounding (`segment` 1 = LM, 2 = HM) over one
+   set of gate columns that is the time-sorted union of both moments' gate times. The build
+   merges each pair into one row and places every exported gate on its GEX gate by matching
+   gate times: LM columns equal a Channel 1 gate centre minus that channel's
+   `GateTimeShift`, HM columns equal a Channel 2 gate centre as written (which convention a
+   channel follows is tested, not assumed). On the 304 that resolves 23 LM and 30 HM
+   columns, 2 of them shared gates, none unmatched. The output carries every GEX gate
+   (28 LM, 37 HM); gates absent from the export or culled for a sounding are `*` with
+   `InUse` 0. Values are converted from Workbench's V/(A m⁴) to the delivered pV/(A m⁴)
+   (× 1e12, sign unchanged — both are positive; per-gate medians agree with the delivered
+   line to within 6%). Uncertainties are relative in both and untouched. The export carries
+   no pitch/roll, only Workbench's combined `tilt`, so the file has no `TxPitch`/`TxRoll`
+   columns; use the *Assume horizontal transmitter* processing step before inverting.
+   Workbench writes no row for a moment it culled entirely: in the block, 9 soundings have
+   an HM row only. They are kept, LM all `*`, so the input data has exactly the published
+   model's 5648 soundings.
+   A data-derived map (which segment carries real values in each column) is checked against
+   the GEX map and the build refuses on any disagreement. Code:
+   `tools/workbench_dat_split_moments.py`.
 
 Nothing else is altered. No filtering, no resampling, no reprojection, no gap-filling.
 

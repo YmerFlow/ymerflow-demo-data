@@ -21,6 +21,12 @@ What it does, per dataset:
      layers but only N-1 thicknesses; the last is an unbounded halfspace, and
      AGF removes it before publishing because it is often meaningless. Doing the
      same here makes our models match the published product exactly.
+  5. **Split the moments** in the Workbench dat/syn exports. Workbench writes
+     two rows per sounding with LM and HM interleaved across one set of gate
+     columns; YmerFlow's importer wants one row per sounding with Gate_Ch01 /
+     Gate_Ch02, one column per GEX gate, in delivered units. The map from
+     export column to GEX gate comes from the gate times, so the result imports
+     against the standard GEX in system/. See workbench_dat_split_moments.py.
 
 Only the pre-processed data needs step 2; the model exports are already
 whitespace-delimited XYZ that libaarhusxyz reads natively.
@@ -316,11 +322,17 @@ def build_data(dataset, src_root, out_dir, tools_dir, lines):
     return True
 
 
-def build_models(dataset, src_root, out_dir, lines):
-    """Extract each model export, strip the halfspace, and re-dump."""
+def build_models(dataset, src_root, out_dir, lines, gex_path):
+    """Extract each model export, strip the halfspace, split moments, and re-dump.
+
+    ``gex_path`` is the derived xyz-variant GEX; the dat/syn exports are split
+    into per-moment gate groups against it (step 5 in the module docstring).
+    """
     import libaarhusxyz as lx
+    from workbench_dat_split_moments import split_workbench_moments
 
     name = dataset["name"]
+    gex = lx.GEX(gex_path)
     for kind, rel in SOURCES[name]["models"].items():
         src = os.path.join(src_root, rel)
         tmp = extract_line.extract(src, out_dir, lines, dataset["bbox"], suffix=f"tmp{kind}")
@@ -331,6 +343,8 @@ def build_models(dataset, src_root, out_dir, lines):
         for before, after in scrub_header(xyz):
             print(f"    scrubbed header: {before[:58]!r} -> {after[:48]!r}")
         dropped = strip_halfspace(xyz)
+        if kind in ("dat", "syn"):
+            xyz = split_workbench_moments(lx.XYZ(xyz), gex).model_dict
         inv_dir = os.path.join(out_dir, "agf_inversion")
         os.makedirs(inv_dir, exist_ok=True)
         label = INVERSION_FILE_NAMES[kind]
@@ -362,6 +376,8 @@ def main(argv=None):
     parser.add_argument("--out", default="../data", help="output directory")
     parser.add_argument("--only", choices=["line_300901", "block"],
                         help="build just one dataset")
+    parser.add_argument("--models-only", action="store_true",
+                        help="rebuild only agf_inversion/ (skips the multi-GB data extraction)")
     args = parser.parse_args(argv)
 
     tools_dir = os.path.dirname(os.path.abspath(__file__))
@@ -370,31 +386,35 @@ def main(argv=None):
     if args.only:
         datasets = [d for d in datasets if d["name"] == args.only]
 
-    for dataset in datasets:
-        out_dir = os.path.join(args.out, dataset["name"])
-        os.makedirs(out_dir, exist_ok=True)
-        lines = resolve_lines(dataset, repo_dir)
-        build_data(dataset, args.source, out_dir, tools_dir, lines)
-        build_models(dataset, args.source, out_dir, lines)
-
+    # The GEX comes first: the moment split of the dat/syn exports needs it.
+    # Derive the xyz-variant GEX from the published skb one (see the note at
+    # SKB_GEX). Only the xyz GEX ships: it is the one that matches the delivered
+    # data. The skb file is an input to this build, not a deliverable - shipping
+    # it beside centre-referenced XYZ invites inverting with the wrong geometry.
     sys_dir = os.path.join(args.out, "system")
     os.makedirs(sys_dir, exist_ok=True)
     for f in SYSTEM_FILES:
         src = os.path.join(args.source, f)
         if os.path.exists(src):
             shutil.copy(src, sys_dir)
-
-    # Derive the xyz-variant GEX from the published skb one (see the note at
-    # SKB_GEX). Only the xyz GEX ships: it is the one that matches the delivered
-    # data. The skb file is an input to this build, not a deliverable - shipping
-    # it beside centre-referenced XYZ invites inverting with the wrong geometry.
+    gex_path = os.path.join(sys_dir, XYZ_GEX_OUT)
     skb = os.path.join(args.source, SKB_GEX)
     if os.path.exists(skb):
-        changed = derive_xyz_gex(skb, os.path.join(sys_dir, XYZ_GEX_OUT))
-        print(f"\n  derived {XYZ_GEX_OUT} from the skb GEX - {len(changed)} line(s) changed:")
+        changed = derive_xyz_gex(skb, gex_path)
+        print(f"  derived {XYZ_GEX_OUT} from the skb GEX - {len(changed)} line(s) changed:")
         for before, after in changed:
             print(f"    {before}  ->  {after}")
-    print(f"\nsystem/: {len(os.listdir(sys_dir))} file(s)")
+    if not os.path.exists(gex_path):
+        raise SystemExit(f"no GEX at {gex_path} and no {SKB_GEX} in --source to derive it from")
+    print(f"system/: {len(os.listdir(sys_dir))} file(s)\n")
+
+    for dataset in datasets:
+        out_dir = os.path.join(args.out, dataset["name"])
+        os.makedirs(out_dir, exist_ok=True)
+        lines = resolve_lines(dataset, repo_dir)
+        if not args.models_only:
+            build_data(dataset, args.source, out_dir, tools_dir, lines)
+        build_models(dataset, args.source, out_dir, lines, gex_path)
     return 0
 
 
