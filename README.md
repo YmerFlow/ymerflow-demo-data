@@ -9,7 +9,7 @@ Two datasets, deliberately different shapes:
 | | what | why |
 |---|---|---|
 | **`line_300901`** | one whole flight line, 8995 soundings at 10 Hz | run a pipeline end to end on something small |
-| **`block`** | 26 adjacent lines over ~7 × 5 km, 76,389 soundings | anything needing neighbours — spatially constrained inversion, gridding, sections |
+| **`block`** | 26 adjacent lines over ~7 × 5 km, 76,389 soundings | anything needing neighbours — spatially constrained inversion, gridding, sections. Meant to be inverted **as a block**; that needs a paid plan. On the free tier, invert it one line at a time |
 
 > ## ⚠️ The "as delivered" data must be PROCESSED before it is inverted
 >
@@ -33,7 +33,10 @@ system/           system_skytem304_for_delivered_data.gex     the GEX to import 
 
 **Two datasets, two releases.** `python3 download.py` fetches **only the single line** and the
 system files. The 26-line block is a separate release, fetched only with `--dataset block` or
-`--all`, so nobody on a small plan downloads 76,389 soundings and tries to invert them.
+`--all`. The block exists to be inverted **as a block** — a spatially constrained inversion
+across all 26 lines is how you see what the system does with neighbouring soundings, and it
+is what AGF's published model is — but that is far beyond a free-tier job. On the free tier
+the block is inverted **one line at a time**; the whole-block inversion needs a paid plan.
 
 **`as_delivered/` is the contractor's product, minimally processed** — navigation and drift
 applied, but nothing stacked, culled or filtered, still at the full 10 Hz acquisition rate.
@@ -72,7 +75,7 @@ These are measured runs on YmerFlow's default cluster, not estimates:
 | dataset | soundings | a full inversion takes | request |
 |---|---:|---|---|
 | **`line_300901`** | 8,995 | **~2 h 20 m** at 24 CPU, peak RAM 4 GiB | 24 CPU / 12 Gi / 3 h deadline |
-| **`block`** | 76,389 | **do not invert as one job** — invert per line | — |
+| **`block`** | 76,389 | as a block: a paid-plan job, hours at high CPU; **on the free tier, one line at a time** (~3,000 soundings delivered, a few hundred after averaging) | per line: as the single line above, smaller |
 
 **If you are on a free or small plan, neither of these is your first job.** A single short
 line is: a few minutes at 8–16 CPU / 4 Gi. Memory barely grows with sounding count; runtime
