@@ -104,7 +104,14 @@ COLUMN_RENAMES = {"Alt": "tx_elevation"}
 # RxCoilPosition is deliberately left alone - the receiver really is offset
 # from the frame centre, and the forward model needs that.
 SKB_GEX = "20180823_304_DualWaveform_60Hz_skb.gex"
-XYZ_GEX_OUT = "20180823_304_DualWaveform_60Hz_xyz.gex"
+XYZ_GEX_OUT = "system_skytem304_for_delivered_data.gex"
+
+# What the Workbench export kinds are, in words a first-time reader understands.
+INVERSION_FILE_NAMES = {
+    "dat": "inversion_input_data",        # the soundings AGF actually inverted (culled, stacked)
+    "mod": "inversion_resistivity_model",  # the published model - the benchmark
+    "syn": "inversion_forward_response",   # what that model predicts the data to be
+}
 GEX_ZERO_KEYS = ("GPSDifferentialPosition", "GPSPosition",
                  "AltimeterPosition", "InclinometerPosition")
 GEX_UNIT_KEYS = ("GateFactor",)
@@ -246,7 +253,7 @@ def _copy_data_alc(name, src_root, tools_dir, out_dir, flavor):
     The Geosoft column order needs the ALC written for it in this repo; the
     LPNNRD order is described by the ALC that ships with the delivery.
     """
-    dst = os.path.join(out_dir, "delivered", f"{name}_delivered.alc")
+    dst = os.path.join(out_dir, "as_delivered", f"skytem_as_delivered_{name}.alc")
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     if flavor == "geosoft":
         shutil.copy(os.path.join(tools_dir, GEOSOFT_ALC), dst)
@@ -296,7 +303,7 @@ def build_data(dataset, src_root, out_dir, tools_dir, lines):
         if renamed:
             print(f"    renamed {renamed}")
         df.to_csv(csv_path, index=False)
-        xyz_path = os.path.join(out_dir, "delivered", f"{name}_delivered.xyz")
+        xyz_path = os.path.join(out_dir, "as_delivered", f"skytem_as_delivered_{name}.xyz")
         os.makedirs(os.path.dirname(xyz_path), exist_ok=True)
         data_csv_to_xyz(csv_path, xyz_path)
         os.remove(csv_path)
@@ -304,7 +311,7 @@ def build_data(dataset, src_root, out_dir, tools_dir, lines):
     else:
         got = extract_line.extract(src, out_dir, lines, dataset["bbox"], suffix="data")
         if got:
-            dst = os.path.join(out_dir, "delivered", f"{name}_delivered.xyz")
+            dst = os.path.join(out_dir, "as_delivered", f"skytem_as_delivered_{name}.xyz")
             os.makedirs(os.path.dirname(dst), exist_ok=True)
             os.replace(got, dst)
     return True
@@ -325,10 +332,11 @@ def build_models(dataset, src_root, out_dir, lines):
         for before, after in scrub_header(xyz):
             print(f"    scrubbed header: {before[:58]!r} -> {after[:48]!r}")
         dropped = strip_halfspace(xyz)
-        inv_dir = os.path.join(out_dir, "inversion")
+        inv_dir = os.path.join(out_dir, "agf_inversion")
         os.makedirs(inv_dir, exist_ok=True)
-        out_xyz = os.path.join(inv_dir, f"{name}_{kind}.xyz")
-        out_alc = os.path.join(inv_dir, f"{name}_{kind}.alc")
+        label = INVERSION_FILE_NAMES[kind]
+        out_xyz = os.path.join(inv_dir, f"{label}_{name}.xyz")
+        out_alc = os.path.join(inv_dir, f"{label}_{name}.alc")
         lx.dump(xyz, out_xyz, alcfile=out_alc)
 
         # An ALC maps gate/channel columns. Model exports carry layers, not

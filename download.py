@@ -7,8 +7,9 @@ pay for it. This script fetches them into ``data/``.
 
 Standard library only: no pip install needed to get the data.
 
-    python3 download.py                       # everything
-    python3 download.py --dataset line_300901 # just the single line
+    python3 download.py                       # the single line + system files (default)
+    python3 download.py --dataset block       # the 26-line block, on request only
+    python3 download.py --all                 # everything
     python3 download.py --list                # show what is available
 
 Each file is verified against the SHA-256 recorded in ``manifest.json``, and
@@ -93,6 +94,7 @@ def main(argv=None):
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--dataset", help="fetch only this dataset (e.g. line_300901, block, system)")
     parser.add_argument("--out", default=os.path.join(here, "data"), help="destination directory")
+    parser.add_argument("--all", action="store_true", help="fetch every dataset, including the block")
     parser.add_argument("--list", action="store_true", help="list available files and exit")
     parser.add_argument("--force", action="store_true", help="re-download even if present and valid")
     args = parser.parse_args(argv)
@@ -103,23 +105,26 @@ def main(argv=None):
     with open(manifest_path) as fh:
         manifest = json.load(fh)
 
-    tag = manifest["release_tag"]
     files = manifest["files"]
+    if not args.dataset and not args.all:
+        # Default deliberately excludes the block: a free-tier user who downloads it
+        # and tries to invert it as one job blocks the queue and gets nothing.
+        files = [f for f in files if not f["dataset"].startswith("block")]
     if args.dataset:
-        files = [f for f in files if f["dataset"] == args.dataset]
+        files = [f for f in files if f["dataset"].split("/")[0] == args.dataset]
         if not files:
             available = sorted({f["dataset"] for f in manifest["files"]})
             raise SystemExit(f"no dataset {args.dataset!r}; available: {', '.join(available)}")
 
     if args.list:
-        print(f"release {tag} - {len(files)} file(s)")
+        print(f"{len(files)} file(s)")
         for f in files:
             print(f"  {human(f['size']):>10}  {f['dataset']}/{f['name']}")
         print(f"  {human(sum(f['size'] for f in files)):>10}  total")
         return 0
 
     total = sum(f["size"] for f in files)
-    print(f"Fetching {len(files)} file(s), {human(total)}, from release {tag}\n")
+    print(f"Fetching {len(files)} file(s), {human(total)}\n")
 
     fetched = skipped = 0
     for f in files:
@@ -128,7 +133,7 @@ def main(argv=None):
             skipped += 1
             continue
         print(f"  {f['dataset']}/{f['name']}  ({human(f['size'])})")
-        fetch(asset_url(tag, f["name"]), dst, f["size"])
+        fetch(asset_url(f["release_tag"], f["name"]), dst, f["size"])
         got = sha256(dst)
         if got != f["sha256"]:
             os.remove(dst)

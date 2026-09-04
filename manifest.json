@@ -1,81 +1,93 @@
 {
-  "release_tag": "v0.1.0",
   "files": [
     {
-      "name": "line_300901_delivered.alc",
-      "dataset": "line_300901/delivered",
+      "name": "skytem_as_delivered_line_300901.alc",
+      "dataset": "line_300901/as_delivered",
+      "release_tag": "line-v0.1.0",
       "size": 2052,
       "sha256": "9b34ca09b6dcb25486f81a003d5ba6b79f0dfd291675deb2d276c60f4c7f9ec4"
     },
     {
-      "name": "line_300901_delivered.xyz",
-      "dataset": "line_300901/delivered",
+      "name": "skytem_as_delivered_line_300901.xyz",
+      "dataset": "line_300901/as_delivered",
+      "release_tag": "line-v0.1.0",
       "size": 17245198,
       "sha256": "39bd857f5319b043842adc3dc0a1b1377932cf0b14803d0dd330130537185da7"
     },
     {
-      "name": "line_300901_dat.xyz",
-      "dataset": "line_300901/inversion",
-      "size": 949828,
-      "sha256": "9c63138f5582bd5e0466b799f94a6e89cbb90e845921b9444975e6d4d6228b0d"
-    },
-    {
-      "name": "line_300901_mod.xyz",
-      "dataset": "line_300901/inversion",
-      "size": 1052115,
-      "sha256": "b93bc5b9fe4995150aecd6abf6a09e90ca88b4d833f2795f4640bef78e795dce"
-    },
-    {
-      "name": "line_300901_syn.xyz",
-      "dataset": "line_300901/inversion",
+      "name": "inversion_forward_response_line_300901.xyz",
+      "dataset": "line_300901/agf_inversion",
+      "release_tag": "line-v0.1.0",
       "size": 584633,
       "sha256": "f92dbf78fde5ec19f85ff9b1449ddd0f561564d3747ffe0562cb1cd15931e43a"
     },
     {
-      "name": "block_delivered.alc",
-      "dataset": "block/delivered",
+      "name": "inversion_input_data_line_300901.xyz",
+      "dataset": "line_300901/agf_inversion",
+      "release_tag": "line-v0.1.0",
+      "size": 949828,
+      "sha256": "9c63138f5582bd5e0466b799f94a6e89cbb90e845921b9444975e6d4d6228b0d"
+    },
+    {
+      "name": "inversion_resistivity_model_line_300901.xyz",
+      "dataset": "line_300901/agf_inversion",
+      "release_tag": "line-v0.1.0",
+      "size": 1052115,
+      "sha256": "b93bc5b9fe4995150aecd6abf6a09e90ca88b4d833f2795f4640bef78e795dce"
+    },
+    {
+      "name": "skytem_as_delivered_block.alc",
+      "dataset": "block/as_delivered",
+      "release_tag": "block-v0.1.0",
       "size": 2073,
       "sha256": "4fff6fcc166b35607d13195efb3543fc3151fce0d3791abfb2c029bdcd9ff3ae"
     },
     {
-      "name": "block_delivered.xyz",
-      "dataset": "block/delivered",
+      "name": "skytem_as_delivered_block.xyz",
+      "dataset": "block/as_delivered",
+      "release_tag": "block-v0.1.0",
       "size": 78512333,
       "sha256": "968e08701a4e5085f9013690546baa23a0d94db03b116594e7d94bfcec87b3de"
     },
     {
-      "name": "block_dat.xyz",
-      "dataset": "block/inversion",
-      "size": 10268729,
-      "sha256": "a109d4819acaf925a00a385d796c5555f082770da0eb4455e82b4a94e681a9f6"
-    },
-    {
-      "name": "block_mod.xyz",
-      "dataset": "block/inversion",
-      "size": 11154745,
-      "sha256": "7bc7ca31956f24d7ccaf3663fbdae3a753f6b0a2c45297ac36eedad5a3155994"
-    },
-    {
-      "name": "block_syn.xyz",
-      "dataset": "block/inversion",
+      "name": "inversion_forward_response_block.xyz",
+      "dataset": "block/agf_inversion",
+      "release_tag": "block-v0.1.0",
       "size": 6300056,
       "sha256": "cd37bc49d90d144b44258cfa3da4ff0911ad6f5a855b1dd6d8db3402a9a6c384"
     },
     {
+      "name": "inversion_input_data_block.xyz",
+      "dataset": "block/agf_inversion",
+      "release_tag": "block-v0.1.0",
+      "size": 10268729,
+      "sha256": "a109d4819acaf925a00a385d796c5555f082770da0eb4455e82b4a94e681a9f6"
+    },
+    {
+      "name": "inversion_resistivity_model_block.xyz",
+      "dataset": "block/agf_inversion",
+      "release_tag": "block-v0.1.0",
+      "size": 11154745,
+      "sha256": "7bc7ca31956f24d7ccaf3663fbdae3a753f6b0a2c45297ac36eedad5a3155994"
+    },
+    {
       "name": "20180613_446_NE304_LPNNRD.lin",
       "dataset": "system",
+      "release_tag": "line-v0.1.0",
       "size": 68386,
       "sha256": "e7c034598de95f2ca4c4331195d23f71d647d7658db06e6aecc3ea3419d5ea60"
     },
     {
       "name": "20180613_446_NE304_LPSNRD.lin",
       "dataset": "system",
+      "release_tag": "line-v0.1.0",
       "size": 65332,
       "sha256": "c5409b3fda4d00c34694db337340208f22335a887ea99be3ef9330ed0e464180"
     },
     {
-      "name": "20180823_304_DualWaveform_60Hz_xyz.gex",
+      "name": "system_skytem304_for_delivered_data.gex",
       "dataset": "system",
+      "release_tag": "line-v0.1.0",
       "size": 6793,
       "sha256": "9521452e93432665d99c09e0ed041592441df1bffde8e9ae01f8bd3e02fb0d3a"
     }

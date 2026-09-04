@@ -18,8 +18,11 @@ import json
 import os
 import sys
 
-DATASETS = ("line_300901/delivered", "line_300901/inversion",
-            "block/delivered", "block/inversion", "system")
+# Each top-level dataset ships on its OWN release, so `download.py` fetches only
+# the single line by default and the block only on request.
+DATASETS = ("line_300901/as_delivered", "line_300901/agf_inversion",
+            "block/as_delivered", "block/agf_inversion", "system")
+RELEASE_FOR = {"line_300901": "line-v0.1.0", "block": "block-v0.1.0", "system": "line-v0.1.0"}
 CHUNK = 1024 * 256
 
 
@@ -36,7 +39,6 @@ def main(argv=None):
     repo = os.path.dirname(here)
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--tag", required=True, help="release tag, e.g. v0.1.0")
     parser.add_argument("--data", default=os.path.join(repo, "data"))
     parser.add_argument("--out", default=os.path.join(repo, "manifest.json"))
     args = parser.parse_args(argv)
@@ -57,19 +59,17 @@ def main(argv=None):
                     f"and {dataset}/. Release assets share one namespace, so names "
                     f"must be unique across datasets.")
             clashes[name] = dataset
-            files.append({"name": name, "dataset": dataset,
+            top = dataset.split("/")[0]
+            files.append({"name": name, "dataset": dataset, "release_tag": RELEASE_FOR[top],
                           "size": os.path.getsize(path), "sha256": sha256(path)})
             print(f"  {files[-1]['size']/1048576:8.2f} MB  {dataset}/{name}")
 
-    manifest = {"release_tag": args.tag, "files": files}
+    manifest = {"files": files}
     with open(args.out, "w") as fh:
         json.dump(manifest, fh, indent=2)
         fh.write("\n")
     total = sum(f["size"] for f in files)
     print(f"\n{len(files)} file(s), {total/1048576:.1f} MB -> {os.path.basename(args.out)}")
-    print(f"Upload with:\n  gh release create {args.tag} "
-          f"data/*/*.xyz data/*/*.alc data/*/*.gex data/*/*.lin \\\n"
-          f"    --title 'LPNNRD/LPSNRD 2018 demo data' --notes-file RELEASE_NOTES.md")
     return 0
 
 

@@ -43,9 +43,9 @@ Files used:
 
 | input | delivery | used for |
 |---|---|---|
-| `LPNNRD2018_EM_MAG_AUX.xyz` (2.5 GB) | LPN-NRD | `line_300901` delivered data |
-| `LPSNRD2018_EM_MAG_AUX.XYZ` (1.8 GB) | LPS-NRD | `block` delivered data |
-| `LPNLPS_SCI12i_MOD_{dat,inv,syn}.xyz` | SCI appendix | all models, both datasets |
+| `LPNNRD2018_EM_MAG_AUX.xyz` (2.5 GB) | LPN-NRD | `line_300901/as_delivered` |
+| `LPSNRD2018_EM_MAG_AUX.XYZ` (1.8 GB) | LPS-NRD | `block/as_delivered` |
+| `LPNLPS_SCI12i_MOD_{dat,inv,syn}.xyz` | SCI appendix | `agf_inversion/` — input data, resistivity model, forward response |
 | `20180823_304_DualWaveform_60Hz_skb.gex` | either | source for the derived xyz GEX (not shipped) |
 | `20180613_446_NE304_{LPNNRD,LPSNRD}.lin` | both | flight-line masks |
 
@@ -95,7 +95,7 @@ Re-run the derivation against your own download:
 python3 tools/build_dataset.py --source /path/to/deliverables --out data
 ```
 
-The strongest check is that **`block/inversion/block_mod.xyz` reproduces the published inversion
+The strongest check is that **`block/agf_inversion/inversion_resistivity_model_block.xyz` reproduces the published inversion
 exactly**. Comparing it against `LPNNRD2018_AEM_SCI_INV_v1.xyz` over the same area:
 
 - 5648 soundings × 39 layers on both sides

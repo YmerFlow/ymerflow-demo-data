@@ -3,7 +3,7 @@
 _Outline only, 2026-09-04. Blocked on two inputs: the gate-matched GEX (22 LM / 29 HM) and the
 confirmed moment-merge for this line. Do not follow yet._
 
-**The idea.** `inversion/line_300901_dat.xyz` is the data the contractor actually inverted —
+**The idea.** `agf_inversion/inversion_input_data_line_300901.xyz` is the data the contractor actually inverted —
 already culled and stacked to 531 soundings. Skip processing's averaging, invert it, and your
 model should *reproduce* the published one, because you are starting from the same soundings.
 
@@ -17,4 +17,4 @@ model should *reproduce* the published one, because you are starting from the sa
    Replace from GEX** (uncertainties) and **Assume horizontal transmitter** (the export
    carries no tilt columns; this synthesises them).
 4. **Invert** — same settings as Tutorial 1; 531 soundings runs in ~15 min at 8 CPU / 4 Gi.
-5. **Compare** with `line_300901_mod.xyz`. Expect `rmse_d` ≈ 1.0 and a close match.
+5. **Compare** with `inversion_resistivity_model_line_300901.xyz`. Expect `rmse_d` ≈ 1.0 and a close match.

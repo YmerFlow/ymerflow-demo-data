@@ -11,18 +11,32 @@ Two datasets, deliberately different shapes:
 | **`line_300901`** | one whole flight line, 8995 soundings at 10 Hz | run a pipeline end to end on something small |
 | **`block`** | 26 adjacent lines over ~7 × 5 km, 76,389 soundings | anything needing neighbours — spatially constrained inversion, gridding, sections |
 
-Each is laid out the same way — the survey data kept separate from somebody's inversion of it:
+> ## ⚠️ The "as delivered" data must be PROCESSED before it is inverted
+>
+> `skytem_as_delivered_*.xyz` is SkyTEM's 10 Hz product: **8,995 soundings on the single line.**
+> Inverting it as-is takes **2+ hours at 24 CPU** and is far outside a free-tier budget — the
+> job will be killed unfinished and you will have paid for nothing. Run `process_tem` first with
+> the **moving-average filter at `target_spacing_m` ≈ 30 m**, which stacks it to ~650 soundings.
+> Tutorial 1 walks through it. The `agf_inversion/` files are *already* stacked — that is what
+> AGF inverted — and are the reference to compare against, not a second input.
+
+Each dataset is laid out the same way — the survey data kept separate from AGF's inversion of it:
 
 ```
 <dataset>/
-  delivered/   <dataset>_delivered.xyz   as delivered by SkyTEM, 10 Hz, + .alc
-  inversion/   <dataset>_dat.xyz         the data that went INTO the inversion
-               <dataset>_mod.xyz         the recovered resistivity model
-               <dataset>_syn.xyz         the forward response of that model
-system/        the xyz-variant GEX, and a flight-line mask per district
+  as_delivered/   skytem_as_delivered_<dataset>.xyz + .alc   SkyTEM's 10 Hz product. PROCESS FIRST.
+  agf_inversion/  inversion_input_data_<dataset>.xyz          the soundings AGF actually inverted
+                  inversion_resistivity_model_<dataset>.xyz   AGF's published model - the benchmark
+                  inversion_forward_response_<dataset>.xyz    what that model predicts the data to be
+system/           system_skytem304_for_delivered_data.gex     the GEX to import the delivered data with
+                  *.lin                                       flight-line masks (not used by the import)
 ```
 
-**`delivered/` is the contractor's product, minimally processed** — navigation and drift
+**Two datasets, two releases.** `python3 download.py` fetches **only the single line** and the
+system files. The 26-line block is a separate release, fetched only with `--dataset block` or
+`--all`, so nobody on a small plan downloads 76,389 soundings and tries to invert them.
+
+**`as_delivered/` is the contractor's product, minimally processed** — navigation and drift
 applied, but nothing stacked, culled or filtered, still at the full 10 Hz acquisition rate.
 It is not the instrument raw (`.skb` / `.mat`), which is not published. Everything a
 processing pipeline would do to it is still ahead of you, which is the point.
@@ -34,22 +48,22 @@ predicts — not just a pile of soundings.
 
 | file | what it is | what consumes it |
 |---|---|---|
-| `delivered/*_delivered.xyz` + `.alc` | SkyTEM's minimally processed 10 Hz data, one row per sounding, LM and HM gates in one row | **Import** in YmerFlow (`import_skytem`: XYZ + this ALC + the GEX from `system/`), then **process**, then **invert** |
-| `system/*_xyz.gex` | the system description matching the delivered data | Import, with the file above |
-| `inversion/*_dat.xyz` | the soundings that went **into** the published inversion, *after* the contractor's culling and stacking — **two rows per sounding** (one per moment, `segment` column), as Aarhus Workbench exports them | Reference: what a good processing run should leave you with. See the note below before trying to import it |
-| `inversion/*_mod.xyz` | the published resistivity model, 39 layers | **Compare** your own inverted model against it — this is the benchmark |
-| `inversion/*_syn.xyz` | the forward response of that model, same two-rows-per-sounding layout as `dat` | Check a forward calculation, or the data fit the published model achieved |
+| `as_delivered/skytem_as_delivered_*.xyz` + `.alc` | SkyTEM's minimally processed 10 Hz data, one row per sounding, LM and HM gates in one row | **Import** in YmerFlow (`import_skytem`: XYZ + this ALC + the GEX from `system/`), then **process — including the averaging step —** then **invert** |
+| `system/system_skytem304_for_delivered_data.gex` | the system description matching the delivered data | Import, with the file above |
+| `agf_inversion/inversion_input_data_*.xyz` | the soundings that went **into** AGF's inversion, *after* their culling and stacking — **two rows per sounding** (one per moment, `segment` column), as Aarhus Workbench exports them | Reference: what a good processing run should leave you with. See the note below before trying to import it |
+| `agf_inversion/inversion_resistivity_model_*.xyz` | AGF's published resistivity model, 39 layers | **Compare** your own inverted model against it — this is the benchmark |
+| `agf_inversion/inversion_forward_response_*.xyz` | the forward response of that model, same two-rows-per-sounding layout | Check a forward calculation, or the data fit the published model achieved |
 
-Only the `delivered` file carries an `.alc`: an ALC maps gates and channels, and a model
+Only the as-delivered file carries an `.alc`: an ALC maps gates and channels, and a model
 carries layers, so a model's would be an empty shell.
 
-**About importing `dat` directly.** It is not a drop-in input. Workbench writes one row per
+**About importing `inversion_input_data` directly.** It is not a drop-in input. Workbench writes one row per
 moment per sounding, and the import expects one row per sounding with both moments across
 it; the culled gate count (22 LM / 29 HM) also needs a GEX with matching `NoGates`, not the
 full-gate one in `system/`. Inverting it is possible — the published comparison figure was
 made that way — but it takes a de-interleaving step and a gate-matched GEX that are not in
-this repository yet. Until they are, treat `dat` as a reference product, and run the pipeline
-from `delivered/`.
+this repository yet. Until they are, treat the inversion input as a reference product, and run the pipeline
+from `as_delivered/`.
 
 ## Which dataset for which job — read this before you invert anything
 
@@ -77,7 +91,7 @@ EPSG:32614 (WGS 84 / UTM zone 14N). Everything is derived from the districts' pu
 deliverables — see **[PROVENANCE.md](PROVENANCE.md)** for sources, exactly what was changed,
 and how to check it.
 
-`block/inversion/block_mod.xyz` **is** the published inversion: 220,272 resistivity values compared
+`block/agf_inversion/inversion_resistivity_model_block.xyz` **is** the published inversion: 220,272 resistivity values compared
 against the ENWRA release, difference exactly zero. That is the point of the benchmark — you
 can check your result against a model that was published independently of you.
 
@@ -92,7 +106,8 @@ Three walkthroughs in [`tutorials/`](tutorials/):
 ## Getting it
 
 ```
-python3 download.py
+python3 download.py                 # the single line + system files
+python3 download.py --dataset block # the 26-line block, if you really want it
 ```
 
 Or clone and use `data/` directly.
@@ -111,9 +126,9 @@ reads it directly:
 ```python
 import libaarhusxyz as lx
 
-data  = lx.parse("data/line_300901/delivered/line_300901_delivered.xyz",
-                 alcfile="data/line_300901/delivered/line_300901_delivered.alc")
-model = lx.parse("data/line_300901/inversion/line_300901_mod.xyz")
+data  = lx.parse("data/line_300901/as_delivered/skytem_as_delivered_line_300901.xyz",
+                 alcfile="data/line_300901/as_delivered/skytem_as_delivered_line_300901.alc")
+model = lx.parse("data/line_300901/agf_inversion/inversion_resistivity_model_line_300901.xyz")
 
 model["layer_data"]["rho_i"].shape     # (531, 39) - soundings x layers
 ```
@@ -123,7 +138,7 @@ this repository does not need a YmerFlow checkout to build or read its own data.
 
 ## The GEX is the xyz variant — on purpose
 
-`system/` ships **one** system description, `…_xyz.gex`. The delivery only publishes the
+`system/` ships **one** system description, `system_skytem304_for_delivered_data.gex`. The delivery only publishes the
 `_skb` GEX — the system *as flown*, with GPS/altimeter/inclinometer offsets from the frame
 centre and the measured `GateFactor` per channel. But the delivered XYZ has **already had
 those corrections applied**: soundings are referenced to the frame centre and gates are

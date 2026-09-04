@@ -15,18 +15,18 @@ xyz GEX. Get them with `python3 download.py --dataset line_300901/delivered` and
 
 | file | role |
 |---|---|
-| `line_300901_delivered.xyz` | 8,995 soundings at 10 Hz — the input |
-| `line_300901_delivered.alc` | tells the importer which column is which |
-| `20180823_304_DualWaveform_60Hz_xyz.gex` | the SkyTEM 304 system, as it applies to delivered data |
+| `skytem_as_delivered_line_300901.xyz` | 8,995 soundings at 10 Hz — the input |
+| `skytem_as_delivered_line_300901.alc` | tells the importer which column is which |
+| `system_skytem304_for_delivered_data.gex` | the SkyTEM 304 system, as it applies to delivered data |
 
 ## 1. Import
 
 Create a process of type **Import SkyTEM data** (`import_skytem`). Upload the three files into
 its fields:
 
-- **XYZ Data File** → `line_300901_delivered.xyz`
+- **XYZ Data File** → `skytem_as_delivered_line_300901.xyz`
 - **GEX System File** → the `_xyz.gex`
-- **ALC Allocation File** → `line_300901_delivered.alc`
+- **ALC Allocation File** → `skytem_as_delivered_line_300901.alc`
 - **Scale Factor** → `1e-12`. The delivered gates are in picovolts; the pipeline works in V/m².
 - **EPSG Projection Code** → `32614`. The coordinates are WGS 84 / UTM zone 14N.
 
@@ -100,7 +100,7 @@ misfit (`rmse_d`) falling toward ~1.0.
 ## 4. Review
 
 Open the output model in a section plot. Then compare against the published one:
-`line_300901/inversion/line_300901_mod.xyz` — 39 layers, the same line, produced by the
+`line_300901/inversion/inversion_resistivity_model_line_300901.xyz` — 39 layers, the same line, produced by the
 survey contractor in Aarhus Workbench and published by the district.
 
 What "good" looks like: the same stratigraphy — resistive near-surface, the conductive
