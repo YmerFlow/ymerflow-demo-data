@@ -23,16 +23,25 @@ It is also the cheapest inversion in this repository: 531 soundings, well inside
    scale factor at its default (`1e-12`): the file is in pV/(A m⁴), the delivered convention.
    Projection `32614`.
 
-2. **Process** — one step only: **Assume horizontal transmitter**. The Workbench export
-   carries a combined `tilt` angle but no pitch/roll, and the inversion wants both; this step
-   sets them to zero, which is what AGF's export already assumes for the corrected data.
+2. **Process** — two steps, neither of which touches the data values:
+   - **Apply gex** — disables the first `RemoveInitialGates` gates of each channel, as the
+     GEX declares (7 on the 304). Delivered SkyTEM data arrives with those gates already
+     blanked; a Workbench export still carries them, and if they reach the inversion they
+     drag a spurious conductor into the top few metres. This step is what makes the gate
+     selection come from the system description instead of from a number you typed.
+   - **Assume horizontal transmitter** — sets pitch and roll to zero. Inversion data is
+     tilt-corrected by definition; the export carries no pitch/roll columns, and the
+     inversion needs them to exist.
+
    *Do not* add the moving-average filter (the data are already stacked) and *do not* replace
    the STD from the GEX (the file carries AGF's own uncertainties, 3–19% relative — that is
    part of what you are reproducing).
 
-3. **Invert** — the same settings as Tutorial 1 are fine. The inversion's gate filter narrows
-   the gates further; the defaults work. Size the job from Tutorial 3: ~15 minutes at 16 CPU /
-   8 Gi, deadline 1 h.
+3. **Invert** — the same settings as Tutorial 1 are fine, with one check: the gate filter's
+   `start_lm` / `start_hm` must not be *below* the GEX's `RemoveInitialGates` (7 / 7 on the
+   304; the indices are 0-based). Step 2 already protects you — a disabled gate stays out
+   whatever the filter says — but the filter defaults are not read from the GEX today
+   (Ymerflow#93). Size the job from Tutorial 3: ~5 minutes at 16 CPU / 8 Gi, deadline 1 h.
 
 4. **Compare** with `inversion_resistivity_model_line_300901.xyz`, 39 layers. Expect the data
    misfit near 1 and a model that matches the published one closely but not exactly: AGF ran a
