@@ -20,8 +20,17 @@ Usage:
 single-threaded). Runs single-threaded on purpose: SimPEG's multiprocessing path
 re-imports ``__main__`` and misbehaves on macOS.
 
-First result, 2026-09-04, line 300901, 304 xyz GEX: LM gates 5-7 (8-13 us) at 0.78-0.81,
-recovering to 0.97 by 300 us; HM 0.94-0.98. See Ymerflow#94.
+Results so far, line 300901, 304 xyz GEX (median ours / Workbench):
+
+  fork without the GEX's receiver low-pass filters (simpleem3 to 2026-09-04):
+      LM gates 5-7 (8-13 us) 0.78-0.81, recovering to 0.97 by 300 us; HM 0.94-0.98
+  with the two declared first-order filters, coil 210 kHz + TiB 300 kHz (simpeg PR #17):
+      LM gates 5-7 0.91-0.95, 0.98 by 300 us; HM 0.98
+
+What is left after the filters - 5-9% at 8-16 us decaying by 40 us - is front-gate
+shaped; the flat ~2% at all times is something else. Both on Ymerflow#94; the measured
+system response (.sr2) is Ymerflow#95. Whatever fork this runs against, the numbers
+it prints are that fork's standing against Workbench.
 """
 
 import argparse
