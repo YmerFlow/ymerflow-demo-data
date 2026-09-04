@@ -29,7 +29,6 @@ Each dataset is laid out the same way — the survey data kept separate from AGF
                   inversion_resistivity_model_<dataset>.xyz   AGF's published model - the benchmark
                   inversion_forward_response_<dataset>.xyz    what that model predicts the data to be
 system/           system_skytem304_for_delivered_data.gex     the GEX to import the delivered data with
-                  *.lin                                       flight-line masks (not used by the import)
 ```
 
 **Two datasets, two releases.** `python3 download.py` fetches **only the single line** and the

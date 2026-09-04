@@ -47,7 +47,6 @@ Files used:
 | `LPSNRD2018_EM_MAG_AUX.XYZ` (1.8 GB) | LPS-NRD | `block/as_delivered` |
 | `LPNLPS_SCI12i_MOD_{dat,inv,syn}.xyz` | SCI appendix | `agf_inversion/` — input data, resistivity model, forward response |
 | `20180823_304_DualWaveform_60Hz_skb.gex` | either | source for the derived xyz GEX (not shipped) |
-| `20180613_446_NE304_{LPNNRD,LPSNRD}.lin` | both | flight-line masks |
 
 The GEX shipped in both deliveries is **byte-identical** — one system, one description — so
 `system/` carries a single copy.

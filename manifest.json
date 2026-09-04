@@ -71,20 +71,6 @@
       "sha256": "7bc7ca31956f24d7ccaf3663fbdae3a753f6b0a2c45297ac36eedad5a3155994"
     },
     {
-      "name": "20180613_446_NE304_LPNNRD.lin",
-      "dataset": "system",
-      "release_tag": "line-v0.1.0",
-      "size": 68386,
-      "sha256": "e7c034598de95f2ca4c4331195d23f71d647d7658db06e6aecc3ea3419d5ea60"
-    },
-    {
-      "name": "20180613_446_NE304_LPSNRD.lin",
-      "dataset": "system",
-      "release_tag": "line-v0.1.0",
-      "size": 65332,
-      "sha256": "c5409b3fda4d00c34694db337340208f22335a887ea99be3ef9330ed0e464180"
-    },
-    {
       "name": "system_skytem304_for_delivered_data.gex",
       "dataset": "system",
       "release_tag": "line-v0.1.0",

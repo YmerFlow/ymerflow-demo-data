@@ -84,11 +84,10 @@ SOURCES = {
 }
 
 # Shared system description - one GEX serves both districts (the two copies in
-# the delivery are byte-identical), plus a flight-line mask per district.
-SYSTEM_FILES = [
-    "20180613_446_NE304_LPNNRD.lin",
-    "20180613_446_NE304_LPSNRD.lin",
-]
+# the delivery are byte-identical). The GEX itself is derived below; nothing
+# else from the delivery is copied into system/ (the .lin flight-line masks
+# were dropped - the import does not use them).
+SYSTEM_FILES = []
 
 # The vendor's "Alt" is an elevation, not an altitude. Renamed on export.
 COLUMN_RENAMES = {"Alt": "tx_elevation"}

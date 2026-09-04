@@ -8,7 +8,7 @@ pay for it. This script fetches them into ``data/``.
 Standard library only: no pip install needed to get the data.
 
     python3 download.py                       # the single line + system files (default)
-    python3 download.py --dataset block       # the 26-line block, on request only
+    python3 download.py --dataset block       # the 26-line block (+ system files), on request only
     python3 download.py --all                 # everything
     python3 download.py --list                # show what is available
 
@@ -111,7 +111,9 @@ def main(argv=None):
         # and tries to invert it as one job blocks the queue and gets nothing.
         files = [f for f in files if not f["dataset"].startswith("block")]
     if args.dataset:
-        files = [f for f in files if f["dataset"].split("/")[0] == args.dataset]
+        # The system files (the GEX) come with every dataset - a dataset without
+        # its GEX cannot be imported.
+        files = [f for f in files if f["dataset"].split("/")[0] in (args.dataset, "system")]
         if not files:
             available = sorted({f["dataset"] for f in manifest["files"]})
             raise SystemExit(f"no dataset {args.dataset!r}; available: {', '.join(available)}")
