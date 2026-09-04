@@ -76,6 +76,10 @@ DEFAULT_DUMMY = 9999.0
 FLIGHTLINE_RENAMES = {
     "line": "Line", "fid": "Fid", "x": "UTMX", "y": "UTMY",
     "topo": "Topography", "invalt": "TxAltitude",
+    # Workbench's own per-sounding data residual and total residual. Kept -
+    # they are the contractor's misfit and therefore the target to match - but
+    # under a name that cannot be mistaken for a residual this platform computed.
+    "resdata": "wb_resdata", "restotal": "wb_restotal",
 }
 # Per-segment bookkeeping that means nothing once the pair is one row.
 FLIGHTLINE_DROPS = ("segment", "numdata")

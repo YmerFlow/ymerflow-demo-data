@@ -37,7 +37,11 @@ It is also the cheapest inversion in this repository: 531 soundings, well inside
    the STD from the GEX (the file carries AGF's own uncertainties, 3–19% relative — that is
    part of what you are reproducing).
 
-3. **Invert** — the same settings as Tutorial 1 are fine, with one check: the gate filter's
+3. **Invert** — use AGF's discretization so the comparison is like for like: start model
+   **40 layers, log spaced, minimum thickness 1 m, top of the last layer at 350 m**. That
+   reproduces their 1 m first layer and 1.095 thickness ratio (they publish 39 layers because
+   they strip the halfspace before release; the 40th layer here is that halfspace). The
+   rest of the settings as in Tutorial 1, with one check: the gate filter's
    `start_lm` / `start_hm` must not be *below* the GEX's `RemoveInitialGates` (7 / 7 on the
    304; the indices are 0-based). Step 2 already protects you — a disabled gate stays out
    whatever the filter says — but the filter defaults are not read from the GEX today
