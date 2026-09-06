@@ -45,7 +45,8 @@ It is also the cheapest inversion in this repository: 531 soundings, well inside
    `start_lm` / `start_hm` must not be *below* the GEX's `RemoveInitialGates` (7 / 7 on the
    304; the indices are 0-based). Step 2 already protects you — a disabled gate stays out
    whatever the filter says — but the filter defaults are not read from the GEX today
-   (Ymerflow#93). Size the job from Tutorial 3: ~5 minutes at 16 CPU / 8 Gi, deadline 1 h.
+   ([Ymerflow#93](https://github.com/YmerFlow/Ymerflow/issues/93)). Size the job from
+   Tutorial 3: ~7 minutes at 16 CPU / 8 Gi, deadline 1 h.
 
 4. **Compare** with `inversion_resistivity_model_line_300901.xyz`, 39 layers. Expect the data
    misfit near 1 and a model that matches the published one closely but not exactly: AGF ran a

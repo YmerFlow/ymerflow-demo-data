@@ -1,17 +1,12 @@
 # Tutorial 1 — From delivered data to a resistivity model
 
-_Draft 2026-09-04. Written from the process schemas and the AEM26 validation runs, not yet
-walked through click by click on ymerflow.earth — step names are the ones the process types
-expose; parameter defaults are what those runs used. Mark anything that does not match what
-you see._
-
 **What you will do:** take one flight line as SkyTEM delivered it, process it, invert it, and
 compare your model with the one the survey published. About 20 minutes of your time; the
 inversion itself runs 5–15 minutes on the free tier.
 
-**What you need:** from `line_300901/`, the delivered data and its ALC; from `system/`, the
-xyz GEX. Get them with `python3 download.py --dataset line_300901/delivered` and
-`--dataset system`, or from the release page.
+**What you need:** the delivered data and its ALC from `line_300901/as_delivered/`, and the
+GEX from `system/`. `python3 download.py` fetches exactly these; they are also on the
+release page.
 
 | file | role |
 |---|---|
@@ -25,45 +20,48 @@ Create a process of type **Import SkyTEM data** (`import_skytem`). Upload the th
 its fields:
 
 - **XYZ Data File** → `skytem_as_delivered_line_300901.xyz`
-- **GEX System File** → the `_xyz.gex`
+- **GEX System File** → `system_skytem304_for_delivered_data.gex`
 - **ALC Allocation File** → `skytem_as_delivered_line_300901.alc`
-- **Scale Factor** → `1e-12`. The delivered gates are in picovolts; the pipeline works in V/m².
+- **Scale Factor** → `1e-12`. The delivered gates are in pV/(A m⁴); the pipeline works in V/(A m⁴).
 - **EPSG Projection Code** → `32614`. The coordinates are WGS 84 / UTM zone 14N.
 
-Run it. The output dataset should report 8,995 soundings, one flight line, and two channels —
-`Gate_Ch01` with 28 gates (low moment) and `Gate_Ch02` with 37 (high moment). If the channel
-count is one, the ALC did not apply; if the coordinates land in the wrong place on the map,
-the EPSG is wrong.
+Run it. The output dataset reports 8,995 soundings, one flight line, and two channels —
+`Gate_Ch01` with 28 gates (low moment) and `Gate_Ch02` with 37 (high moment), the first seven
+of each blank because SkyTEM removes them before delivery. If the channel count is one, the ALC
+did not apply; if the soundings land in the wrong place on the map, the EPSG is wrong.
 
-**Why the `_xyz` GEX and not a `_skb` one.** The delivered data already has the GPS-to-frame-
-centre shift and the gate scaling applied. The xyz GEX has those corrections neutralized so
-they are not applied twice. Using a skb GEX here silently misplaces the receiver by 13 m.
+**Why this GEX and not the delivery's `_skb` one.** The delivered data already has the
+GPS-to-frame-centre shift and the gate scaling applied. This GEX has those corrections
+neutralized so they are not applied twice. Using a skb GEX here silently misplaces the receiver
+by 13 m.
 
 ## 2. Process — and bring the sounding count down
 
 Create a **Process TEM data** (`process_tem`) process with the import as its input, and build
 this chain. Every step exposes its parameters; the ones that matter are named.
 
-1. **Apply GEX** (disable early gates) — honours `RemoveInitialGates=7` from the GEX: the
-   first seven gates of each moment are transmitter turn-off and not invertible.
-2. **STD error: Replace from GEX** — once per channel. Gives every datum an uncertainty from
+1. **Apply gex** — disables the first `RemoveInitialGates` gates of each moment (7 on the 304),
+   as the system description declares. They are transmitter turn-off and not invertible.
+2. **Correct data and tilt for 1D** — uses the delivered `TxPitch` and `TxRoll` to correct the
+   data for frame tilt.
+3. **Disable soundings by tilt and altitude** — drops soundings with implausible frame tilt or
+   altitude. The altitude column is **`TxAltitude`**, height above ground (28–56 m on this
+   line). The vendor's `Alt` column is an *elevation* and has been renamed `tx_elevation` in
+   this data so you cannot pick it by accident.
+4. **STD error: Replace from GEX** — once per channel. Gives every datum an uncertainty from
    the GEX noise model. Without uncertainties the inversion has nothing to fit *to*.
-3. **Tilt & altitude** cull — drops soundings with implausible frame tilt or altitude. Note
-   the altitude column is `Height` (metres above ground); the vendor's `Alt` is an
-   *elevation* and has been renamed `tx_elevation` in this data so you cannot pick it by
-   accident.
-4. **Moving-average filter** — this is the step that makes the free tier possible.
+5. **Moving average filter** — this is the step that makes the free tier possible.
    - `target_spacing_m` = **30** → resamples the 10 Hz stream to one sounding per ~30 m.
      8,995 soundings over 19.7 km become roughly **650**. That is what the inversion sees.
-   - `filter_dict`: leave the defaults (LM 3→5 soundings, HM 5→9) — they stack neighbours
-     into each output sounding, which is where the noise reduction comes from.
-   - `min_valid_fraction` = 0.35 (default).
+   - `filter_dict`: the widths stack neighbours into each output sounding, which is where the
+     noise reduction comes from. Narrower windows keep narrow targets; wider ones are quieter.
+   - `min_valid_fraction` = 0.35.
 
    Skip this step and you will submit 8,995 soundings: a 2-hour, 24-CPU job that the free
    tier cannot finish. It is not a quality choice; it is the difference between a job that
    ends and one that is killed.
-5. **Noise floor** / **Negative data** culls — optional; the defaults are conservative.
-6. **Normalize for SimPEG** — required; converts units and layout for the inversion.
+6. **Disable gates by noise floor** and **by negative data** — optional; the defaults are
+   conservative.
 
 Run it. Check the output sounding count — it should be in the hundreds, not thousands — and
 that both channels still have gates 8 onward active.
@@ -71,17 +69,17 @@ that both channels still have gates 8 onward active.
 ## 3. Invert
 
 Create an **Invert TEM data** (`invert_tem`) process on the processed dataset. System:
-**Dual moment TEM**. These are the AEM26 validation settings; they are a good starting point.
+**Dual moment TEM**. A good starting point:
 
 | group | parameter | value | why |
 |---|---|---|---|
-| gate filter | `start_lm` / `end_lm` | 5 / 28 | keep the usable low-moment window |
-| | `start_hm` / `end_hm` | 10 / 32 | same for high moment |
-| start model | `n_layer` | 39 | matches the published model — makes the comparison direct |
-| | `thicknesses_type` | logspaced, min dz 1 m, top of last layer 400 m | |
+| gate filter | `start_lm` / `end_lm` | 7 / 28 | the GEX's `RemoveInitialGates` and `NoGates` for LM; indices are 0-based |
+| | `start_hm` / `end_hm` | 7 / 37 | same for HM |
+| start model | `n_layer` | 40 | the published model's discretization (it shows 39 because the halfspace is stripped before release) |
+| | `thicknesses_type` | logspaced, minimum 1 m, top of last layer 350 m | same |
 | | `res` | 100 Ω·m | uniform start |
 | regularization | `alpha_s` / `alpha_r` / `alpha_z` | 1e-4 / 1 / 1 | smooth-L2 |
-| uncertainties | `std_data_override` | false | use the STDs from step 2.2 |
+| uncertainties | `std_data_override` | false | use the STDs from step 2.4 |
 | | `std_data` | 0.03 | 3 % floor |
 | directives | `max_iter` | **25** | see below |
 | simulation | `parallel` / `n_cpu` | true / 8 | |
@@ -91,23 +89,22 @@ Create an **Invert TEM data** (`invert_tem`) process on the processed dataset. S
 - **CPU 8, memory 4 Gi, deadline 45 min.** Measured: 753 soundings ran in 17 min at 16 CPU
   with a 1.2 GiB peak. Memory barely depends on sounding count; do not size it by soundings.
 - `max_iter` 25 rather than the default 50: the misfit flattens by iteration 20–30 and the
-  remaining iterations only cost time. The published-fit target still stops it early if it
-  gets there.
+  remaining iterations only cost time.
 
 Submit. Watch the log: you should see the Gauss–Newton iterations counting up with the
 misfit (`rmse_d`) falling toward ~1.0.
 
 ## 4. Review
 
-Open the output model in a section plot. Then compare against the published one:
-`line_300901/inversion/inversion_resistivity_model_line_300901.xyz` — 39 layers, the same line, produced by the
-survey contractor in Aarhus Workbench and published by the district.
+Open the output model in a section plot. Then compare against the published one,
+`line_300901/agf_inversion/inversion_resistivity_model_line_300901.xyz` — 39 layers, the same
+line, produced by the survey contractor in Aarhus Workbench and published by the district.
 
-What "good" looks like: the same stratigraphy — resistive near-surface, the conductive
-layer at depth — at similar depths. Your resistivities will differ in detail; the published
-model used different gate culling and regularization. What would be wrong: a model that is
-uniform (nothing fit — check the uncertainties), or one that looks like the start model
-(check `max_iter` actually ran), or structure that follows the flight line's altitude
+What "good" looks like: the same layering at similar depths. Your resistivities will differ
+in detail; the published model used different culling, stacking and regularization, and the
+early gates are modelled differently (see Tutorial 2, *See it done*). What would be wrong: a
+model that is uniform (nothing fit — check the uncertainties), or one that looks like the start
+model (check `max_iter` actually ran), or structure that follows the flight line's altitude
 (the altitude column is wrong).
 
 ## If it goes wrong
@@ -115,7 +112,6 @@ uniform (nothing fit — check the uncertainties), or one that looks like the st
 | symptom | cause | fix |
 |---|---|---|
 | import shows 1 channel | ALC not applied | re-upload the `.alc` in the ALC field |
-| `22 gates of data but gate-time table yields 28` | wrong GEX for the data | this data wants the full-gate `_xyz` GEX |
-| every sounding culled at step 2.3 | altitude column is an elevation | use `Height`, not `Alt`/`tx_elevation` |
-| job killed at the deadline | too many soundings or deadline too short | step 2.4, and size from the sizing guide |
-| uniform model | no uncertainties | step 2.2 ran? `std_data_override` false? |
+| every sounding culled at step 2.3 | altitude column is an elevation | use `TxAltitude`, not `tx_elevation` |
+| job killed at the deadline | too many soundings or deadline too short | step 2.5, and size from Tutorial 3 |
+| uniform model | no uncertainties | step 2.4 ran? `std_data_override` false? |
