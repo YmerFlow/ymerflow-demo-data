@@ -115,3 +115,7 @@ model (check `max_iter` actually ran), or structure that follows the flight line
 | every sounding culled at step 2.3 | altitude column is an elevation | use `TxAltitude`, not `tx_elevation` |
 | job killed at the deadline | too many soundings or deadline too short | step 2.5, and size from Tutorial 3 |
 | uniform model | no uncertainties | step 2.4 ran? `std_data_override` false? |
+
+## See it done
+
+Links to this chain on ymerflow.earth — import, processing and inversion of the as-delivered line in the public LPNNRD2018 project — will appear here when it has been run there.
