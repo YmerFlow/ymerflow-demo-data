@@ -40,28 +40,52 @@ by 13 m.
 Create a **Process TEM data** (`process_tem`) process with the import as its input, and build
 this chain. Every step exposes its parameters; the ones that matter are named.
 
+Every cull below takes a channel and a start gate, so it appears once per moment: gate
+**10 on LM and 15 on HM** (1-based) here. Culls trim the tail of a sounding after the first
+gate they reject, which is what you want on 10 Hz data.
+
 1. **Apply gex** — disables the first `RemoveInitialGates` gates of each moment (7 on the 304),
    as the system description declares. They are transmitter turn-off and not invertible.
-2. **Correct data and tilt for 1D** — uses the delivered `TxPitch` and `TxRoll` to correct the
-   data for frame tilt.
-3. **Disable soundings by tilt and altitude** — drops soundings with implausible frame tilt or
-   altitude. The altitude column is **`TxAltitude`**, height above ground (28–56 m on this
-   line). The vendor's `Alt` column is an *elevation* and has been renamed `tx_elevation` in
-   this data so you cannot pick it by accident.
-4. **STD error: Replace from GEX** — once per channel. Gives every datum an uncertainty from
-   the GEX noise model. Without uncertainties the inversion has nothing to fit *to*.
-5. **Moving average filter** — this is the step that makes the free tier possible.
-   - `target_spacing_m` = **30** → resamples the 10 Hz stream to one sounding per ~30 m.
-     8,995 soundings over 19.7 km become roughly **650**. That is what the inversion sees.
-   - `filter_dict`: the widths stack neighbours into each output sounding, which is where the
-     noise reduction comes from. Narrower windows keep narrow targets; wider ones are quieter.
-   - `min_valid_fraction` = 0.35.
+   It does *not* set uncertainties.
+2. **STD error: Add from noise model** — once per channel: `noise_level_1ms` **2e-9** V/m²,
+   `noise_exponent` −0.5, `relative_noise_fraction` 0.03. This gives every datum an error
+   that grows as the signal dies, which is what lets late gates be *kept* and weighted
+   rather than culled. The 2e-9 is measured from this line
+   (`tools/benchmark/measure_noise_and_curvature.py`); the step's default of 1e-8 is five
+   times too pessimistic for a 304.
+3. **Disable soundings by tilt and altitude** — once per channel; `max_alt` **75** m, pitch
+   and roll 10°. The altitude column is **`TxAltitude`**, height above ground (28–56 m on
+   this line). The vendor's `Alt` column is an *elevation* and has been renamed
+   `tx_elevation` in this data so you cannot pick it by accident.
+4. **Correct data and tilt for 1D** — uses the delivered `TxPitch` and `TxRoll` to correct the
+   amplitudes for frame tilt.
+5. **Disable gates by negative data** — once per channel.
+6. **Disable gates by curvature max** and **min** — once per channel each: **±3 on LM,
+   ±6 on HM**. These bracket the curvature range the contractor's own culling kept (the
+   defaults of ±10 would cull almost nothing). Curvature caught 8–9% of the LM data on this
+   line and nothing on HM.
+7. **Moving average filter** — this is the step that makes the free tier possible.
+   - `filter_dict`: window widths in *soundings*, first gate to last gate:
+     `Gate_Ch01` **51 → 125**, `Gate_Ch02` **75 → 175**. At 10 Hz this line is 2.2 m per
+     sounding, so that is 115–280 m and 170–390 m windows. Narrower keeps narrow targets;
+     wider is quieter.
+   - `target_spacing_m` = **30** → one output sounding per ~30 m. 8,995 soundings over
+     19.7 km become **692**. That is what the inversion sees.
+   - `averaging_method` hybrid, `min_valid_fraction` 0.35.
 
    Skip this step and you will submit 8,995 soundings: a 2-hour, 24-CPU job that the free
    tier cannot finish. It is not a quality choice; it is the difference between a job that
-   ends and one that is killed.
-6. **Disable gates by noise floor** and **by negative data** — optional; the defaults are
-   conservative.
+   ends and one that is killed. It is also the slow step: 7½ minutes for this line.
+8. **Disable gates by STD values** — once per channel, `std_threshold` **0.20**. After
+   averaging, the STD reflects how well each stack agreed with itself; this is the cull that
+   decides how deep the model is trusted. Lower it to 0.15 if the bottom of the model looks
+   noisy, raise it if you lose depth. On this line it took 23% of LM and 15% of HM data, all
+   late gates.
+9. **Disable soundings by number of active gates** — once per channel, minimum **4**.
+
+There is deliberately no *noise floor* cull before the averaging: signal below the floor is
+buried, not gone, and averaging is what recovers it. The error model in step 2 and the STD
+cull in step 8 do the judging afterwards.
 
 Run it. Check the output sounding count — it should be in the hundreds, not thousands — and
 that both channels still have gates 8 onward active.
@@ -79,7 +103,7 @@ Create an **Invert TEM data** (`invert_tem`) process on the processed dataset. S
 | | `thicknesses_type` | logspaced, minimum 1 m, top of last layer 350 m | same |
 | | `res` | 100 Ω·m | uniform start |
 | regularization | `alpha_s` / `alpha_r` / `alpha_z` | 1e-4 / 1 / 1 | smooth-L2 |
-| uncertainties | `std_data_override` | false | use the STDs from step 2.4 |
+| uncertainties | `std_data_override` | false | use the STDs from steps 2.2 and 2.7 |
 | | `std_data` | 0.03 | 3 % floor |
 | directives | `max_iter` | **25** | see below |
 | simulation | `parallel` / `n_cpu` | true / 8 | |
@@ -113,5 +137,6 @@ model (check `max_iter` actually ran), or structure that follows the flight line
 |---|---|---|
 | import shows 1 channel | ALC not applied | re-upload the `.alc` in the ALC field |
 | every sounding culled at step 2.3 | altitude column is an elevation | use `TxAltitude`, not `tx_elevation` |
-| job killed at the deadline | too many soundings or deadline too short | step 2.5, and size from Tutorial 3 |
-| uniform model | no uncertainties | step 2.4 ran? `std_data_override` false? |
+| job killed at the deadline | too many soundings or deadline too short | step 2.7, and size from Tutorial 3 |
+| uniform model | no uncertainties | step 2.2 ran? `std_data_override` false? |
+| model noisy at depth | late gates kept that the stacks did not agree on | lower the STD cull in step 2.8 to 0.15 |
