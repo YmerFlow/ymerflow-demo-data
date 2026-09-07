@@ -106,6 +106,14 @@ Three walkthroughs in [`tutorials/`](tutorials/):
 2. [Inversion export → resistivity model](tutorials/02-inversion-export-to-resistivity-model.md) — import AGF's own inversion input, invert it, compare with the published model. The short path.
 3. [Sizing a job so it finishes](tutorials/03-sizing-a-job.md) — CPU, memory and deadline from measured runs.
 
+## Measuring against the benchmark
+
+`tools/benchmark/` holds the comparison tools: a model against the published model by
+sounding position and depth band, a processed dataset against the published inversion
+input gate by gate, and a measurement of a delivered line's noise level and curvature
+range for setting processing parameters. `tools/forward_vs_workbench.py` compares a
+forward model with Workbench's, no inversion involved. See `tools/benchmark/README.md`.
+
 ## Getting it
 
 ```
