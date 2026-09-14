@@ -159,6 +159,24 @@ model that is uniform (nothing fit — check the uncertainties), or one that loo
 model (check `max_iter` actually ran), or structure that follows the flight line's altitude
 (the altitude column is wrong).
 
+## See it done
+
+Every step of this tutorial has been run on ymerflow.earth in the public **LPNNRD2018**
+project. Open the workspace at each node to see the data, the log and the result; the links
+go straight to the process and version described. The three are tagged **Final** in the
+project, so the tag filter in the flow view shows just this chain.
+
+| step | node |
+|---|---|
+| 1. Import | [Demo: import as-delivered line 300901 (SkyTEM 10 Hz)](https://ymerflow.earth/app/w/a0b90606-f58f-461c-8b36-19c240d6ace9/p/pub-932c6590-b4e3-4f1f-8b4b-b9b050f4c757/pr/6b0b1aee-e155-404e-bf72-2e45ebc6052b/v/1) |
+| 2. Process, the chain above | [Demo: process as-delivered line 300901, version 2](https://ymerflow.earth/app/w/a0b90606-f58f-461c-8b36-19c240d6ace9/p/pub-932c6590-b4e3-4f1f-8b4b-b9b050f4c757/pr/9cc61af7-32d5-4e1f-9e62-58fd202f52c2/v/2) |
+| 3. Invert, 40 layers | [Demo: invert as-delivered line 300901, 40 layers, version 2](https://ymerflow.earth/app/w/a0b90606-f58f-461c-8b36-19c240d6ace9/p/pub-932c6590-b4e3-4f1f-8b4b-b9b050f4c757/pr/2f5f23ca-ebdb-44fe-b1ab-5d7d0c5b11d8/v/2) |
+
+The processing process carries five versions. Version 2 is the chain this tutorial
+describes; the others are the experiments that settled it — wider windows, a flat 3% error
+with no noise floor, wider late-gate windows — and are worth opening if you want to see what
+each choice did to the model.
+
 ## If it goes wrong
 
 | symptom | cause | fix |

@@ -57,6 +57,27 @@ It is also the cheapest inversion in this repository: 531 soundings, well inside
    a single line with a different regularization. The structure should be the same; the
    smoothing will differ.
 
+## See it done
+
+Every step of this tutorial has been run on ymerflow.earth in the public **LPNNRD2018** project.
+Open the workspace at each node to see the data, the log and the result; the links go
+straight to the process and version described.
+
+| step | node |
+|---|---|
+| 1. Import | [Demo: import AGF inversion input, line 300901 (image 2026-09-04)](https://ymerflow.earth/app/w/a0b90606-f58f-461c-8b36-19c240d6ace9/p/pub-932c6590-b4e3-4f1f-8b4b-b9b050f4c757/pr/fff55a29-127f-445b-864f-722b3d9fc481/v/1) |
+| 2. Process | [Demo: process AGF inversion input (horizontal transmitter only), line 300901 (image 2026-09-04)](https://ymerflow.earth/app/w/a0b90606-f58f-461c-8b36-19c240d6ace9/p/pub-932c6590-b4e3-4f1f-8b4b-b9b050f4c757/pr/d59da5b0-510d-4977-9b00-c1fbb859b566/v/1) |
+| 3. Invert, AGF's 40 layers | [Demo: invert AGF inversion input, 40 layers, line 300901 (image 2026-09-04)](https://ymerflow.earth/app/w/a0b90606-f58f-461c-8b36-19c240d6ace9/p/pub-932c6590-b4e3-4f1f-8b4b-b9b050f4c757/pr/7042593e-f9e5-4731-87df-d4b7090df606/v/1) |
+| the same with the first used LM gate trimmed | [LM from gate 6](https://ymerflow.earth/app/w/a0b90606-f58f-461c-8b36-19c240d6ace9/p/pub-932c6590-b4e3-4f1f-8b4b-b9b050f4c757/pr/4d050bec-f0ab-4181-bd41-3456b0479e76/v/1) |
+| and with two trimmed | [LM from gate 7](https://ymerflow.earth/app/w/a0b90606-f58f-461c-8b36-19c240d6ace9/p/pub-932c6590-b4e3-4f1f-8b4b-b9b050f4c757/pr/7a71e56c-09de-4d7e-bd1f-ad4af7bbe9d6/v/1) |
+
+What you will see in step 3 is a top-3 m conductor (6–8 Ω·m) where AGF's model has 15, over
+an otherwise matching section. That is not the data: it is the forward model missing the
+receiver's low-pass filters and front gate at the earliest gates, measured and tracked as
+[Ymerflow#94](https://github.com/YmerFlow/Ymerflow/issues/94). The two trimmed runs show
+that dropping early gates moves the artefact deeper rather than removing it — which is why
+this tutorial does not tell you to trim them.
+
 ## If something is off
 
 - **Import refuses the ALC** — you gave it the delivered data's `.alc`. Each XYZ ships with its
