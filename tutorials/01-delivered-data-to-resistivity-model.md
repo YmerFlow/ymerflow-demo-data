@@ -4,6 +4,9 @@
 compare your model with the one the survey published. About 20 minutes of your time; the
 inversion itself runs 5–15 minutes on the free tier.
 
+**Whose data:** the ENWRA 2018 airborne electromagnetic survey, eastern Nebraska, from the
+[Nebraska GeoCloud](https://geocloud.live). Cite ENWRA and the GeoCloud, not this repository.
+
 **What you need:** the delivered data and its ALC from `line_300901/as_delivered/`, and the
 GEX from `system/`. `python3 download.py` fetches exactly these; they are also on the
 release page.

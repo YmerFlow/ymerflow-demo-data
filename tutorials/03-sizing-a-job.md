@@ -1,7 +1,9 @@
 # Tutorial 3 — Sizing a job so it finishes
 
 Every number here is measured on YmerFlow's default cluster with the SkyTEM 304 data in this
-repository. The tables are anchors, not formulas: size from the nearest measured case.
+repository — the ENWRA 2018 survey, eastern Nebraska, from the
+[Nebraska GeoCloud](https://geocloud.live). The tables are anchors, not formulas: size from
+the nearest measured case.
 
 ## The three numbers a job asks for
 

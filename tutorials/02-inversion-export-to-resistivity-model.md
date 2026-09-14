@@ -8,6 +8,9 @@ error bars. This is the shortest path from download to a model you can check.
 
 It is also the cheapest inversion in this repository: 531 soundings, well inside a free tier.
 
+**Whose data:** the ENWRA 2018 airborne electromagnetic survey, eastern Nebraska, from the
+[Nebraska GeoCloud](https://geocloud.live). Cite ENWRA and the GeoCloud, not this repository.
+
 ## Files
 
 | file | role |

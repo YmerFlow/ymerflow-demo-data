@@ -4,6 +4,20 @@ A small, ready-to-run **public benchmark** for airborne electromagnetic (AEM) pr
 inversion: real SkyTEM data, the published inversion of it, and everything needed to
 reproduce that inversion yourself.
 
+> ## Data source
+>
+> The survey data in this repository is the **ENWRA 2018 airborne electromagnetic survey**
+> of eastern Nebraska, flown for the Eastern Nebraska Water Resources Assessment (ENWRA).
+> The complete survey — data, processing and the published inversion — is on the
+> **Nebraska GeoCloud**: <https://geocloud.live> (free account;
+> [log in](https://geocloud.live/Account/Login) or
+> [register](https://geocloud.live/Account/Register)). The Lower Platte North and Lower
+> Platte South Natural Resources Districts also released it, split between their two
+> deliveries; the GeoCloud has all of it in one place.
+>
+> **Cite ENWRA 2018 and the Nebraska GeoCloud, not this repository.** We redistribute
+> public subsets of their data and add nothing to it but a benchmark layout and tools.
+
 Two datasets, deliberately different shapes:
 
 | | what | why |
@@ -86,7 +100,8 @@ killed at iteration 48 is billed and gives you nothing.
 ## The data
 
 ENWRA 2018 AEM survey, eastern Nebraska. SkyTEM 304, dual moment, flown 28–30 June 2018.
-The originals are published by the districts themselves — you do not have to take ours:
+The complete survey is on the [Nebraska GeoCloud](https://geocloud.live); the originals are
+also published by the districts themselves — you do not have to take ours:
 [LPN-NRD deliverables](https://www.dropbox.com/scl/fo/8lubs33q7s7ltg3t7unud/AIGf3RYEQqmNTKRdL5brRfU?dl=0&rlkey=5qiqfojn7g1ascvi2v7jsvt2d)
 · [LPS-NRD deliverables](https://www.dropbox.com/scl/fo/9lla2b7u66cxrp7d9qy6d/AOOOqyrJcqgGmxiCQPYSV-k/Appendices/Appendix%203%20-%20Deliverables?dl=0&rlkey=may29av4fkyammg3g6ynpbimf)
 · [LPN-NRD viewer](https://lpsnrd.maps.arcgis.com/apps/webappviewer/index.html?id=ac2d1aada438420492e1044472679b1c).

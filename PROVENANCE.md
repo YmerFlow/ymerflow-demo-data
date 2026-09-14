@@ -22,6 +22,14 @@ suggests.
 
 ## Sources
 
+**The survey's home is the Nebraska GeoCloud** — <https://geocloud.live>, a free account is
+required ([log in](https://geocloud.live/Account/Login) ·
+[register](https://geocloud.live/Account/Register)). It holds the whole ENWRA 2018 survey in
+one place: the delivered data, the processed data and the published inversion. The two
+districts released the same survey split between two deliveries, and those deliveries are
+what `tools/build_dataset.py` was run against, so they are listed below as the inputs this
+repository was built from. Cite ENWRA 2018 and the GeoCloud.
+
 Both districts publish their deliverables on Dropbox; LPNNRD also has an ArcGIS viewer.
 The links are reproduced from the survey's own `readme.txt`.
 
