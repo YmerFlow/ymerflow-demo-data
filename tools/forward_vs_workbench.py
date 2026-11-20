@@ -9,7 +9,7 @@ the two forwards agree; a ratio that departs from 1 at the earliest gates and re
 with time is an unmodelled early-time system effect (front gate, system response).
 
 This drives the YmerFlow simpeg fork's static instrument directly, so it needs that
-package installed (``SimPEG.electromagnetics.utils.static_instrument``); it is the one
+package installed (``simpeg.electromagnetics.utils.static_instrument``); it is the one
 tool in this repository that is not standalone. It is the check YmerFlow/Ymerflow#94
 and #95 are measured against.
 
@@ -50,7 +50,7 @@ def main(argv=None):
     p.add_argument("--step", type=int, default=8, help="forward-model every Nth sounding")
     a = p.parse_args(argv)
     warnings.simplefilter("ignore")
-    from SimPEG.electromagnetics.utils.static_instrument import DualMomentTEMXYZSystem
+    from simpeg.electromagnetics.utils.static_instrument.dual import MeasuredTEMXYZSystem
 
     D = os.path.abspath(a.data)
     inv = os.path.join(D, a.dataset, "agf_inversion")
@@ -66,7 +66,7 @@ def main(argv=None):
     sub.flightlines["tilt_y"] = 0.0
     print(f"model: {len(sub.flightlines)} of {len(m.flightlines)} soundings, {sub.layer_data['resistivity'].shape[1]} layers", flush=True)
 
-    System = DualMomentTEMXYZSystem.load_gex(gex)
+    System = MeasuredTEMXYZSystem.load_gex(gex)
     t0 = time.time()
     fwd = System(sub, validate=False).forward(simulation__parallel=False, simulation__n_cpu=1)
     print(f"forward done in {time.time() - t0:.0f}s", flush=True)
